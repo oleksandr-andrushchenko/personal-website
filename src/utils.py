@@ -1,5 +1,14 @@
 import json
 from pathlib import Path
+from datetime import datetime
+
+
+def format_us_date(date_str):
+    try:
+        dt = datetime.strptime(date_str, "%m/%d/%Y")
+        return dt.strftime("%b %d, %Y")  # "Dec 27, 2023"
+    except Exception:
+        return date_str
 
 
 def load_merged_routes():

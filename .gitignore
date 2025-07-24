@@ -1,7 +1,10 @@
-info.txt
-__pycache__
-assets
-data.json
-routes.json
-output
-.idea
+/info.txt
+/__pycache__/
+/assets/
+/data.json
+/routes.json
+/output/
+/.idea/
+/src/assets/*
+!/src/assets/style.css
+!/src/assets/app.js

@@ -23,3 +23,7 @@ make up        # starts webserver.py
 make open      # opens http://localhost:8000
 make generate
 ```
+
+## TODO
+
+- add images for skills

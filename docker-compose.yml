@@ -8,7 +8,6 @@ services:
       - ./src:/app                     # source code (templates, scripts, default assets/routes)
       - ./data.json:/data.json         # custom data (root-level)
       - ./routes.json:/routes.json     # custom routes (root-level)
-      - ./assets:/assets               # custom assets (root-level, optional)
       - ./output:/output               # export location (optional but recommended)
     working_dir: /app
     ports:

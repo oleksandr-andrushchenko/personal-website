@@ -23,9 +23,16 @@ else:
     OUTPUT_DIR.mkdir(parents=True)
 
 # Copy assets
-output_assets = OUTPUT_DIR / "assets"
-shutil.copytree(ASSET_DIR, output_assets, dirs_exist_ok=True)
-print(f"📦 Copied assets to {output_assets}")
+DEFAULT_ASSETS = Path(__file__).parent / "assets"
+OUTPUT_ASSETS = OUTPUT_DIR / "assets"
+
+# Create output/assets folder
+OUTPUT_ASSETS.mkdir(parents=True, exist_ok=True)
+
+# Step 1: Copy all default assets
+if DEFAULT_ASSETS.exists():
+    shutil.copytree(DEFAULT_ASSETS, OUTPUT_ASSETS, dirs_exist_ok=True)
+    print("✅ Copied default assets")
 
 # Download each route from the web server
 for route in allowed_routes:

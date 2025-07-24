@@ -6,12 +6,8 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 WATCH_PATHS = [
-    Path(__file__).parent / "templates",          # default templates
-    Path(__file__).parent / "assets",             # default assets
-    Path(__file__).parent.parent / "assets",      # custom assets
-    Path(__file__).parent / "data.json",          # default data
-    Path(__file__).parent.parent / "data.json",   # custom data
-    Path(__file__).parent / "routes.json",        # default routes
+    Path(__file__).parent,  # everything in src/
+    Path(__file__).parent.parent / "data.json",  # custom data
     Path(__file__).parent.parent / "routes.json"  # custom routes
 ]
 
