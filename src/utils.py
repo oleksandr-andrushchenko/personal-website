@@ -1,6 +1,16 @@
 import json
 from pathlib import Path
 from datetime import datetime
+import random
+
+
+def shuffle(value):
+    try:
+        shuffled = list(value)  # Make a copy
+        random.shuffle(shuffled)
+        return shuffled
+    except Exception:
+        return value  # fallback if value is not iterable
 
 
 def format_us_date(date_str):

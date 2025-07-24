@@ -4,7 +4,7 @@ import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
-from utils import load_merged_data, load_merged_routes, format_us_date
+from utils import load_merged_data, load_merged_routes, format_us_date, shuffle
 
 allowed_routes = load_merged_routes()
 
@@ -13,6 +13,7 @@ TEMPLATE_DIR = Path(__file__).parent / "templates"
 ASSET_DIR = Path(__file__).parent / "assets"
 env = Environment(loader=FileSystemLoader(str(TEMPLATE_DIR)))
 env.filters['format_us_date'] = format_us_date
+env.filters['shuffle'] = shuffle
 
 
 class RequestHandler(BaseHTTPRequestHandler):
