@@ -1,0 +1,18 @@
+<div class="container mb-5" id="{{ block.id }}">
+    <h2 class="mb-4">{{ block.header }}</h2>
+    <div class="row">
+        {% for service in block.services %}
+            <div class="col col-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                    <h3 class="card-title"><i class="bi bi-{{ service.icon }}"></i> {{ service.header }}</h3>
+                    <p class="card-text">{{ service.description }}</p>
+                    <a href="{{ block.button_url }}" class="btn btn-secondary btn-sm">
+                        Contact <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

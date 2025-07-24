@@ -1,0 +1,12 @@
+<div class="bg-body-tertiary py-5 mb-5">
+    <div class="container">
+        <div class="row">
+            {% for stat in block.statistics %}
+                <div class="col col-3 text-center">
+                    <span class="h1">{{ stat.number }}</span>
+                    <div>{{ stat.header }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

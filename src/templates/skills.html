@@ -1,0 +1,8 @@
+<div class="container mb-5" id="{{ block.id }}">
+    <h2 class="mb-4">{{ block.header }}</h2>
+    <div>
+        {% for tag in block.technology_tags %}
+            <span class="badge text-bg-secondary">{{ tag.header }} {{ tag.years }}y {{ tag.percent }}%</span>
+        {% endfor %}
+    </div>
+</div>
