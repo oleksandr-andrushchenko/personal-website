@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 import random
 
 
@@ -19,6 +20,31 @@ def format_us_date(date_str):
         return dt.strftime("%b %d, %Y")  # "Dec 27, 2023"
     except Exception:
         return date_str
+
+
+def format_date_range(start_str, end_str):
+    start = datetime.strptime(start_str, "%m/%Y")
+    end = datetime.strptime(end_str, "%m/%Y")
+
+    diff = relativedelta(end, start)
+    years = diff.years
+    months = diff.months
+
+    start_fmt = start.strftime("%b %Y")  # e.g. "Feb 2024"
+    end_fmt = end.strftime("%b %Y")  # e.g. "Jun 2025"
+
+    parts = []
+    if years == 1:
+        parts.append("1 yr")
+    elif years > 1:
+        parts.append(f"{years} yrs")
+    if months == 1:
+        parts.append("1 mo")
+    elif months > 1:
+        parts.append(f"{months} mos")
+
+    duration = " ".join(parts)
+    return f"{start_fmt} - {end_fmt} · {duration}"
 
 
 def load_merged_routes():
