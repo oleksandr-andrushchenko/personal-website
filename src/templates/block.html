@@ -1,0 +1,36 @@
+<div class="container mb-5" id="{{ block.id }}">
+    <h2 class="mb-4">{{ block.header }}</h2>
+    {% set items_active = block['items'] | selectattr('active') | list %}
+    {% set items_visible = items_active[:block.items_visible_count] if block.items_visible_count else items_active %}
+    {% set items_hidden = items_active[block.items_visible_count:] if block.items_visible_count else [] %}
+    <div class="row">
+        {% set items = items_visible %}
+        {% set salt = block.id %}
+        {% for item in items %}
+            <div class="col col-{{ 12 // block.cols }}">
+                {% set index = loop.index %}
+                {% include (block.id ~ "_block_item.html") with context %}
+            </div>
+        {% endfor %}
+    </div>
+    {% if items_hidden %}
+        {% set toggle_id = 'toggle-hidden-' ~ block.id %}
+        <button class="btn btn-secondary btn-sm" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#{{ toggle_id }}" aria-expanded="false"
+                aria-controls="{{ toggle_id }}">
+            <i class="bi bi-toggles2"></i>
+            {{ block.toggle_hidden }}
+        </button>
+        <div class="row collapse mt-4" id="{{ toggle_id }}">
+            {% set items = items_hidden %}
+            {% set salt = block.id ~ '-hidden' %}
+            {% for item in items %}
+                <div class="col col-{{ 12 // block.cols }}">
+                    {% set index = loop.index %}
+                    {% include (block.id ~ "_block_item.html") with context %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
