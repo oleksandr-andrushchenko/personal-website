@@ -1,10 +1,9 @@
-import json
 import mimetypes
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
-from utils import load_merged_data, load_merged_routes, format_us_date, shuffle
+from utils import load_merged_data, load_merged_routes, format_us_date, shuffle, format_date_range
 
 allowed_routes = load_merged_routes()
 
@@ -14,6 +13,7 @@ ASSET_DIR = Path(__file__).parent / "assets"
 env = Environment(loader=FileSystemLoader(str(TEMPLATE_DIR)))
 env.filters['format_us_date'] = format_us_date
 env.filters['shuffle'] = shuffle
+env.filters['date_range'] = format_date_range
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -47,8 +47,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         try:
             template = env.get_template(template_rel_path)
             data = load_merged_data()
-            print(data)
-            html = template.render(data)
+            data["__ctx__"] = data
+            html = template.render(**data)
         except Exception as e:
             self.send_error(500, f"Error rendering template: {e}")
             return
