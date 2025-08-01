@@ -10,41 +10,16 @@
     <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
-<header>
-    <nav class="navbar navbar-expand-lg bg-primary sticky-top" data-bs-theme="dark">
-        <div class="container">
-            <a class="navbar-brand" style="outline:none" href="/">{{ header_brand|default('Personal') }}</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
-                    aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbar">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    {% for block in blocks|default([])|sort(attribute='order') %}
-                        {% if block.nav_show %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ block.href }}">
-                                    {{ block.nav }}
-                                </a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
+
+{% include "header.html" with context %}
 
 <main>
     {% block content %}
     {% endblock %}
 </main>
 
-<footer class="mt-auto bg-body-tertiary">
-    <div class="container">
-        &copy; {{ current_year }} {{ person }}
-    </div>
-</footer>
+{% include "footer.html" with context %}
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
         crossorigin="anonymous"></script>
