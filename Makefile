@@ -22,4 +22,4 @@ generate:
 	docker exec -it $(CONTAINER) python generate.py
 
 open:
-	@echo "🌐 Visit http://localhost:8000 in your browser manually."
+	@echo "🌐 Visit http://localhost:3000 in your browser manually."
