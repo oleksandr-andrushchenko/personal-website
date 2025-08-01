@@ -1,0 +1,58 @@
+{% set toggle_id = 'toggle-details-' ~ salt ~ '-' ~ index %}
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex align-items-start gap-3 mb-2">
+            {% if item.image_filename %}
+                <img src="/assets/{{ item.image_filename }}" class="rounded"
+                     width="{{ block.image.width }}" height="{{ block.image.height }}"
+                     alt="{{ item.company }}"/>
+            {% endif %}
+            <div>
+                <h3 class="h4 card-title">{{ item.header }}</h3>
+                <div class="card-text">
+                    {{ item.company }} · {{ item.employment_type }}
+                    {% if item.url %}
+                        <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
+                           target="_blank">
+                            {{ block.open_website }} <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    {% endif %}
+                    <button class="btn btn-outline-secondary btn-sm" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#{{ toggle_id }}" aria-expanded="false"
+                            aria-controls="{{ toggle_id }}">
+                        <i class="bi bi-toggles2"></i>
+                        {{ block.toggle_details }}
+                    </button>
+                </div>
+                <div class="card-text">
+                    <small class="text-body-secondary fw-bold">
+                        {{ item.start_date | date_range(item.end_date) }}
+                    </small>
+                </div>
+                <div class="card-text">
+                    <small class="text-body-secondary">
+                        {{ item.location }} · {{ item.location_type }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="collapse" id="{{ toggle_id }}">
+            {% for project in item.projects %}
+                <div class="card-text">
+                    <div class="h5">Project #{{ index }}: {{ project.header }}</div>
+                    <ul>
+                        {% for responsibility in project.responsibilities %}
+                            <li>{{ responsibility }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+            <div class="card-text">
+                <small class="text-body-secondary">
+                    {{ item.skills | join(' · ') }}
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
