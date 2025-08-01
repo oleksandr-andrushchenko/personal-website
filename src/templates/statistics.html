@@ -1,7 +1,8 @@
-<div class="text-bg-light py-5 mb-5">
+<div class="text-bg-light bg-cover text-white py-5 mb-5"
+     style="background-position-y:top;background-image:url('/assets/{{ block.cover_image_filename }}')">
     <div class="container">
         <div class="row">
-            {% for stat in block.statistics %}
+            {% for stat in block.statistics | selectattr('active') %}
                 <div class="col col-3 text-center">
                     <span class="h1">{{ stat.number }}</span>
                     <div>{{ stat.header }}</div>
