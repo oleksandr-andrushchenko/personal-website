@@ -1,17 +1,42 @@
-<div class="p-5 text-center text-bg-light mb-5">
-    <div class="container py-5">
-        <div>
-            {% if block.image_filename %}
-                <img src="/assets/{{ block.image_filename }}" class="rounded-circle"
+<div class="bg-light bg-cover mb-5 py-5"
+     style="
+             {% if block.cover_image.active %}
+                 background-image:url('/assets/{{ block.cover_image.filename }}');
+                 color: white
+             {% endif %}
+             ">
+    <div class="container">
+        <div class="d-flex align-items-center gap-4">
+            {% if block.avatar.active %}
+                <img src="/assets/{{ block.avatar.filename }}" class="rounded-circle"
                      alt="{{ block.person }}"
-                     width="150" height="150"/>
-                <br/>
+                     width="{{ block.avatar.width }}" height="{{ block.avatar.height }}"/>
             {% endif %}
-            Hi! I'm
-            <h1>{{ block.person }}</h1>
-            <p class="col-lg-8 mx-auto lead">
-                {{ block.occupation }}
-            </p>
+
+            <div>
+                <div class="h5">
+                    {{ block.hello }}
+                    {{ block.i_am }}
+                </div>
+                <h1>{{ block.person }}</h1>
+                <h2 class="h5">
+                    {{ block.occupation }}
+                </h2>
+                <div class="h3">
+                    {% for social in block.socials | selectattr('active') %}
+                        <a href="{{ social.url }}"
+                           target="_blank" {{ 'class="text-white"' if block.cover_image.active else '' }}><i
+                                class="bi bi-{{ social.icon }}"></i></a>
+                    {% endfor %}
+                </div>
+                {% if block.cv.active %}
+                    <a href="/assets/{{ block.cv.filename }}"
+                       class="btn btn-{{ 'light' if block.cover_image.active else 'primary' }} btn-sm" download>
+                        <i class="bi bi-download"></i>
+                        {{ block.download_cv }}
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
