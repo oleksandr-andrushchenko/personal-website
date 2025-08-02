@@ -1,8 +1,10 @@
 <header>
-    <nav class="navbar navbar-expand-md bg-primary sticky-top" data-bs-theme="dark">
+    <nav class="navbar navbar-expand-md bg-dark sticky-top" data-bs-theme="dark">
         <div class="container">
             {% if header.brand %}
-                <a class="navbar-brand" style="outline:none" href="/">{{ header.brand|default('Personal') }}</a>
+                <a class="navbar-brand fs-3" style="outline:none" href="/">
+                    {{ header.brand|default('Personal') }}
+                </a>
             {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
                     aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
