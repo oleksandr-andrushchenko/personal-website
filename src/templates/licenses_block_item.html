@@ -1,31 +1,29 @@
-<div class="card mb-4">
-    <div class="card-body">
-        <div class="d-flex align-items-start gap-2">
-            {% if item.image_filename %}
-                <img src="/assets/{{ item.image_filename }}" class="rounded"
-                     width="{{ block.image.width }}" height="{{ block.image.height }}"
-                     alt="{{ item.header }}"/>
-            {% endif %}
-            <div>
-                <h3 class="h4 card-title">{{ item.header }}</h3>
-                <div class="card-text">{{ item.organization }}</div>
-                {% if item.url %}
-                    <div class="card-text">
-                        <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
-                           target="_blank">
-                            {{ block.show_credential }} <i class="bi bi-box-arrow-up-right"></i>
-                        </a>
-                    </div>
-                {% endif %}
+<div class="card-body">
+    <div class="d-flex align-items-start gap-2">
+        {% if item.image_filename %}
+            <img src="/assets/{{ item.image_filename }}" class="rounded"
+                 width="{{ block.image.width }}" height="{{ block.image.height }}"
+                 alt="{{ item.header }}"/>
+        {% endif %}
+        <div>
+            <h3 class="h4 card-title">{{ item.header }}</h3>
+            <div class="card-text">{{ item.organization }}</div>
+            {% if item.url %}
                 <div class="card-text">
-                    <small class="text-body-secondary">
-                        {{ block.issued }} {{ item.issuing_date|format_us_date }}
-                        {% if item.expiration_date %}
-                            &mdash; {{ block.expires }}
-                            {{ item.issuing_date|format_us_date }}
-                        {% endif %}
-                    </small>
+                    <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
+                       target="_blank">
+                        {{ block.show_credential }} <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
                 </div>
+            {% endif %}
+            <div class="card-text">
+                <small class="text-body-secondary">
+                    {{ block.issued }} {{ item.issuing_date|format_us_date }}
+                    {% if item.expiration_date %}
+                        &mdash; {{ block.expires }}
+                        {{ item.issuing_date|format_us_date }}
+                    {% endif %}
+                </small>
             </div>
         </div>
     </div>

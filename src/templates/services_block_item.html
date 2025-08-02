@@ -1,9 +1,10 @@
-<div class="card mb-4">
-    <div class="card-body">
-        <h3 class="h4 card-title"><i class="bi bi-{{ item.icon }}"></i> {{ item.header }}</h3>
-        <p class="card-text">{{ item.description }}</p>
-        <a href="{{ block.button_url }}" class="btn btn-outline-secondary btn-sm">
-            Contact <i class="bi bi-chevron-right"></i>
-        </a>
+<div class="card-body">
+    <div class="d-flex align-items-start gap-3 mb-2">
+        <i class="bi bi-{{ item.icon }} fs-1"></i>
+        <h3 class="h4 card-title">{{ item.header }}</h3>
     </div>
+    <p class="card-text">{{ item.description }}</p>
+    <a href="{{ block.button_url }}" class="btn btn-outline-secondary btn-sm">
+        Contact <i class="bi bi-chevron-right"></i>
+    </a>
 </div>
