@@ -1,14 +1,13 @@
 <div class="container mb-5" id="{{ block.id }}">
-    <h2 class="mb-4">{{ block.header }}</h2>
+    <h2 class="text-bg-dark d-inline-block py-1 px-3 mb-4">{{ block.header }}</h2>
     <div>
-        <div class="d-flex flex-wrap align-items-center gap-2">
+        <div class="d-flex flex-wrap align-items-center gap-0">
             {% for tag in block.technology_tags | selectattr('active') | shuffle %}
                 {% set font_size = (tag.years * 0.2) if (tag.years * 0.2) > 0.8 else 0.8 %}
                 {% set opacity = (tag.percent / 100) | round(2) %}
-                <span
-                        {#                        class="badge bg-secondary fw-normal py-1 px-2"#}
-                        style="opacity: {{ opacity }}; font-size: {{ font_size }}rem;"
-                        title="{{ tag.years }} years of experience">{{ tag.header }}</span>
+                <span class="text-bg-{{ tag.color | default('light') }} px-2"
+                      style="opacity: {{ opacity }}; font-size: {{ font_size }}rem;"
+                      title="{{ tag.years }} years of experience">{{ tag.header }}</span>
             {% endfor %}
         </div>
     </div>
