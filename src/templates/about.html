@@ -1,4 +1,10 @@
-<div class="container mb-5" id="{{ block.id }}">
-    <h2 class="mb-4">{{ block.header }}</h2>
-    <p>{{ block.summary }}</p>
-</div>
+<section class="container mb-5" id="{{ block.id }}">
+    <h2 class="mb-4"><i class="bi bi-info-circle-fill"></i> {{ block.header }}</h2>
+    <div class="card text-bg-light">
+        <div class="card-body">
+            <div class="card-text">
+                {{ block.summary }}
+            </div>
+        </div>
+    </div>
+</section>
