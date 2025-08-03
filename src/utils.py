@@ -22,16 +22,22 @@ def format_us_date(date_str):
         return date_str
 
 
-def format_date_range(start_str, end_str):
+def format_date_range(start_str, end_str=None):
     start = datetime.strptime(start_str, "%m/%Y")
-    end = datetime.strptime(end_str, "%m/%Y")
+
+    # If end_str is None or empty, use current date
+    if not end_str:
+        end = datetime.now()
+        end_fmt = "Present"
+    else:
+        end = datetime.strptime(end_str, "%m/%Y")
+        end_fmt = end.strftime("%b %Y")
 
     diff = relativedelta(end, start)
     years = diff.years
     months = diff.months
 
     start_fmt = start.strftime("%b %Y")  # e.g. "Feb 2024"
-    end_fmt = end.strftime("%b %Y")  # e.g. "Jun 2025"
 
     parts = []
     if years == 1:
