@@ -27,3 +27,6 @@ make generate
 ## TODO
 
 - add images for skills
+- add markings (type=person and other details)
+- disable indexing of websites and images (3rd parties)
+- update Linkedin: move responsibilities to projects, sync with personal website
