@@ -1,12 +1,12 @@
 <div class="card-body">
     <div class="d-flex align-items-start gap-2">
         {% if item.image_filename %}
-            <img src="/assets/{{ item.image_filename }}" class="rounded"
+            <img src="/{{ item.image_filename }}" class="rounded"
                  width="{{ block.image.width }}" height="{{ block.image.height }}"
                  alt="{{ item.header }}"/>
         {% endif %}
         <div>
-            <h3 class="h4 card-title mb-0">
+            <h3 class="h5 card-title mb-0">
                 {{ item.header }}
                 {% if item.ongoing %}
                     <span class="badge text-bg-info">{{ block.ongoing }}</span>
