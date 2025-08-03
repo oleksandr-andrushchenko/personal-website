@@ -1,0 +1,108 @@
+{% set toggle_id = 'toggle-details-' ~ salt ~ '-' ~ index %}
+
+{% if item.experience_id %}
+    {% set experience_items = (__ctx__["experience"]["items"] | selectattr("id", "equalto", item.experience_id) | list) %}
+    {% set experience_item = experience_items[0] if experience_items else {} %}
+{% else %}
+    {% set experience_item = {} %}
+{% endif %}
+
+<div class="card-body">
+    <div class="d-flex align-items-start gap-3 mb-2">
+        {% if item.image_filename or experience_item.image_filename %}
+            <img src="/assets/{{ item.image_filename if item.image_filename else experience_item.image_filename }}"
+                 class="rounded"
+                 style="max-height: {{ block.image.height }}px; max-width: {{ block.image.width }}px"
+                 alt="{{ item.project }}"/>
+        {% endif %}
+        <div>
+            <h3 class="h4 card-title mb-0">
+                {{ item.project }}
+                {% if item.ongoing %}
+                    <span class="badge text-bg-info">{{ block.ongoing }}</span>
+                {% endif %}
+                {% if item.retired %}
+                    <span class="badge text-bg-danger">{{ block.retired }}</span>
+                {% endif %}
+                {% if item.private %}
+                    <span class="badge text-bg-warning">{{ block.private }}</span>
+                {% endif %}
+            </h3>
+            <div class="card-text">
+                {{ item.description }}
+                <br>
+                <small class="text-body-secondary">{{ item.position }}</small>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-outline-secondary btn-sm" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#{{ toggle_id }}" aria-expanded="false"
+            aria-controls="{{ toggle_id }}">
+        <i class="bi bi-arrow-down-up"></i>
+        {{ block.toggle_details }}
+    </button>
+    {% if item.url %}
+        <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
+           target="_blank">
+            {{ block.open_website }} <i class="bi bi-box-arrow-up-right"></i>
+        </a>
+    {% endif %}
+
+    <div class="collapse" id="{{ toggle_id }}">
+        <div class="py-1">
+            {% if experience_item %}
+                <div class="card-text">
+                    <small class="text-body-secondary">
+                        {{ block.associated_with }} <b>{{ experience_item.company }}</b>
+                        {% if experience_item.url %}
+                            <a href="{{ experience_item.url }}" class="btn btn-sm btn-outline-secondary"
+                               target="_blank">
+                                {{ __ctx__["experience"].open_website }} <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                        {% endif %}
+                    </small>
+                </div>
+            {% endif %}
+            {% if item.responsibilities %}
+                <div class="card-text">
+                    <ul class="mb-0">
+                        {% for responsibility in item.responsibilities %}
+                            <li>{{ responsibility }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            {% if item.tags %}
+                <div class="card-text">
+                    <small class="text-body-secondary">
+                        <i class="bi bi-tags"></i>
+                        {{ item.tags | join(' · ') }}
+                    </small>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if item.start_date and item.end_date %}
+        <div class="card-text">
+            <small class="text-body-secondary">
+                <i class="bi bi-calendar"></i>
+                {{ item.start_date | date_range(item.end_date) }}
+            </small>
+        </div>
+    {% endif %}
+
+    {% if item.location %}
+        <div class="card-text">
+            <small class="text-body-secondary">
+                <i class="bi bi-geo"></i>
+                {{ item.location }}
+                {% if item.location_type %}
+                    · {{ item.location_type }}
+                {% endif %}
+            </small>
+        </div>
+    {% endif %}
+</div>
