@@ -12,12 +12,15 @@
             </button>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    {% set ns = namespace(_blocks=[]) %}
-                    {% for block_id in blocks | default([]) %}
-                        {% set ns._blocks = ns._blocks + [__ctx__[block_id]] %}
+                    {% set ns = namespace(_nav_blocks=[]) %}
+
+                    {% for key, block in __ctx__.items() %}
+                        {% if block is mapping and block.nav_active and 'href' in block and 'nav' in block %}
+                            {% set ns._nav_blocks = ns._nav_blocks + [block] %}
+                        {% endif %}
                     {% endfor %}
 
-                    {% for block in ns._blocks | selectattr('nav_active') | sort(attribute='order') %}
+                    {% for block in ns._nav_blocks | sort(attribute='order') %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ block.href }}">
                                 {{ block.nav }}

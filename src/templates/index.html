@@ -2,11 +2,14 @@
 
 {% block content %}
     {% set ns = namespace(_blocks=[]) %}
-    {% for block_id in blocks | default([]) %}
-        {% set ns._blocks = ns._blocks + [__ctx__[block_id]] %}
+
+    {% for key, block in __ctx__.items() %}
+        {% if block is mapping and block.page_active and 'id' in block %}
+            {% set ns._blocks = ns._blocks + [block] %}
+        {% endif %}
     {% endfor %}
 
-    {% for block in ns._blocks | selectattr("page_active") | sort(attribute="order") %}
-        {% include block.id ~ ".html" with context %}
+    {% for block in ns._blocks | sort(attribute="order") %}
+        {% include block.id ~ ".html" ignore missing with context %}
     {% endfor %}
 {% endblock %}
