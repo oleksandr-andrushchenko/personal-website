@@ -31,3 +31,7 @@ make generate
 - disable indexing of websites and images (3rd parties)
 - update Linkedin: move responsibilities to projects, sync with personal website
 - mobile/table ui/ux
+- add favicon
+- add 404.html
+- add meta config: title, description, tags etc.
+- pass values from .env to .py scripts
