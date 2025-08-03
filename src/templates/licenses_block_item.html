@@ -27,7 +27,7 @@
                         {{ block.issued }} {{ item.issuing_date|format_us_date }}
                         {% if item.expiration_date %}
                             &mdash; {{ block.expires }}
-                            {{ item.issuing_date|format_us_date }}
+                            {{ item.expiration_date|format_us_date }}
                         {% endif %}
                     </small>
                 </div>
