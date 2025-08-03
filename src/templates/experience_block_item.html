@@ -1,4 +1,11 @@
 {% set toggle_id = 'toggle-details-' ~ salt ~ '-' ~ index %}
+
+{% if item.id %}
+    {% set project_items = (__ctx__["projects"]["items"] | selectattr("experience_id", "equalto", item.id) | list) %}
+{% else %}
+    {% set project_items = [] %}
+{% endif %}
+
 <div class="card-body">
     <div class="d-flex align-items-start gap-3 mb-2">
         {% if item.image_filename %}
@@ -7,7 +14,12 @@
                  alt="{{ item.company }}"/>
         {% endif %}
         <div>
-            <h3 class="h4 card-title mb-0">{{ item.header }}</h3>
+            <h3 class="h4 card-title mb-0">
+                {{ item.position }}
+                {% if item.ongoing %}
+                    <span class="badge text-bg-info">{{ block.ongoing }}</span>
+                {% endif %}
+            </h3>
             <div class="card-text">
                 {{ item.company }} - {{ item.employment_type }}
             </div>
@@ -30,9 +42,10 @@
 
     <div class="collapse" id="{{ toggle_id }}">
         <div class="py-1">
-            {% for project in item.projects %}
+            {% for project in project_items %}
                 <div class="card-text">
-                    <div class="h5">Project #{{ loop.index }}: {{ project.header }}</div>
+                    <div class="h5 mb-0">Project #{{ loop.index }}: {{ project.project }}</div>
+                    <small class="text-body-secondary">{{ project.position }}</small>
                     <ul class="mb-0">
                         {% for responsibility in project.responsibilities %}
                             <li>{{ responsibility }}</li>
@@ -40,22 +53,32 @@
                     </ul>
                 </div>
             {% endfor %}
-            <div class="card-text">
-                <small class="text-body-secondary">
-                    {{ item.tags | join(' · ') }}
-                </small>
-            </div>
+            {% if item.tags %}
+                <div class="card-text">
+                    <small class="text-body-secondary">
+                        <i class="bi bi-tags"></i>
+                        {{ item.tags | join(' · ') }}
+                    </small>
+                </div>
+            {% endif %}
         </div>
     </div>
 
     <div class="card-text">
-        <small class="text-body-secondary fw-bold">
-            {{ item.start_date | date_range(item.end_date) }}
-        </small>
-    </div>
-    <div class="card-text">
         <small class="text-body-secondary">
-            {{ item.location }} · {{ item.location_type }}
+            <i class="bi bi-calendar"></i>
+            <span class="fw-bold">{{ item.start_date | date_range(item.end_date) }}</span>
         </small>
     </div>
+    {% if item.location %}
+        <div class="card-text">
+            <small class="text-body-secondary">
+                <i class="bi bi-geo"></i>
+                {{ item.location }}
+                {% if item.location_type %}
+                    · {{ item.location_type }}
+                {% endif %}
+            </small>
+        </div>
+    {% endif %}
 </div>
