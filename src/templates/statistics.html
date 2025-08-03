@@ -8,7 +8,7 @@
              {% endif %}
              ">
     <div class="container">
-        <div class="row text-{{ block.text_color | default('body') }}">
+        <div class="row text-{{ block.text_color if block.text_color else 'body' }}">
             {% for stat in block.statistics | selectattr('active') %}
                 <div class="col col-3 text-center">
                     <span class="h1">{{ stat.number }}</span>
