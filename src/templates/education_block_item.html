@@ -42,12 +42,19 @@
 
     <div class="card-text">
         <small class="text-body-secondary">
+            <i class="bi bi-calendar"></i>
             {{ item.start_date | date_range(item.end_date) }}
         </small>
     </div>
-    <div class="card-text">
-        <small class="text-body-secondary">
-            {{ item.location }}
-        </small>
-    </div>
+    {% if item.location %}
+        <div class="card-text">
+            <small class="text-body-secondary">
+                <i class="bi bi-geo"></i>
+                {{ item.location }}
+                {% if item.location_type %}
+                    · {{ item.location_type }}
+                {% endif %}
+            </small>
+        </div>
+    {% endif %}
 </div>
