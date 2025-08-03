@@ -10,7 +10,7 @@
 <div class="card-body">
     <div class="d-flex align-items-start gap-3 mb-2">
         {% if item.image_filename or experience_item.image_filename %}
-            <img src="/assets/{{ item.image_filename if item.image_filename else experience_item.image_filename }}"
+            <img src="/{{ item.image_filename if item.image_filename else experience_item.image_filename }}"
                  class="rounded"
                  style="max-height: {{ block.image.height }}px; max-width: {{ block.image.width }}px"
                  alt="{{ item.project }}"/>
@@ -85,7 +85,7 @@
         </div>
     </div>
 
-    {% if item.start_date and item.end_date %}
+    {% if item.start_date %}
         <div class="card-text">
             <small class="text-body-secondary">
                 <i class="bi bi-calendar"></i>
