@@ -30,3 +30,4 @@ make generate
 - add markings (type=person and other details)
 - disable indexing of websites and images (3rd parties)
 - update Linkedin: move responsibilities to projects, sync with personal website
+- mobile/table ui/ux
