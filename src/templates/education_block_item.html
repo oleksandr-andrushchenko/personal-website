@@ -2,12 +2,12 @@
 <div class="card-body">
     <div class="d-flex align-items-start gap-3 mb-2">
         {% if item.image_filename %}
-            <img src="/assets/{{ item.image_filename }}" class="rounded"
+            <img src="/{{ item.image_filename }}" class="rounded"
                  width="{{ block.image.width }}" height="{{ block.image.height }}"
                  alt="{{ item.school }}"/>
         {% endif %}
         <div>
-            <h3 class="h4 card-title">{{ item.school }}</h3>
+            <h3 class="h5 card-title">{{ item.school }}</h3>
         </div>
     </div>
     <div class="card-text">
@@ -40,12 +40,15 @@
         </div>
     {% endif %}
 
-    <div class="card-text">
-        <small class="text-body-secondary">
-            <i class="bi bi-calendar"></i>
-            {{ item.start_date | date_range(item.end_date) }}
-        </small>
-    </div>
+    {% if item.start_date %}
+        <div class="card-text">
+            <small class="text-body-secondary">
+                <i class="bi bi-calendar"></i>
+                {{ item.start_date | date_range(item.end_date) }}
+            </small>
+        </div>
+    {% endif %}
+
     {% if item.location %}
         <div class="card-text">
             <small class="text-body-secondary">
