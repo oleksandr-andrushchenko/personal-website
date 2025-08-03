@@ -22,9 +22,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         parsed_path = urllib.parse.urlparse(self.path)
         route = parsed_path.path
 
-        # Serve static assets freely
-        if route.startswith("/assets/"):
-            return self.serve_asset(route)
+        # Serve static assets if match
+        if self.serve_asset(route):
+            return
 
         # Restrict to known routes
         if route not in allowed_routes:
@@ -84,23 +84,27 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(html.encode("utf-8"))
 
     def serve_asset(self, path: str):
-        rel_path = Path(path).relative_to("/assets")
+        print(path)
 
-        # Prioritize custom asset if it exists
-        custom_asset = Path(__file__).parent.parent / "assets" / rel_path
-        default_asset = Path(__file__).parent / "assets" / rel_path
+        # Strip the leading slash from the route
+        rel_path = Path(path.lstrip("/"))
+        asset_path = (ASSET_DIR / rel_path).resolve()
 
-        asset_path = custom_asset if custom_asset.exists() else default_asset
+        # Prevent directory traversal: ensure it's within the assets folder
+        assets_root = ASSET_DIR.resolve()
+        if not str(asset_path).startswith(str(assets_root)):
+            return False
 
+        # Serve only if it's an existing file
         if not asset_path.exists() or not asset_path.is_file():
-            self.send_error(404, f"Asset not found: {path}")
-            return
+            return False
 
         mime_type, _ = mimetypes.guess_type(str(asset_path))
         self.send_response(200)
         self.send_header("Content-Type", mime_type or "application/octet-stream")
         self.end_headers()
         self.wfile.write(asset_path.read_bytes())
+        return True
 
 
 if __name__ == "__main__":
