@@ -1,7 +1,9 @@
-<div class="text-bg-light bg-cover py-5 mb-5"
+<div class="text-bg-light py-5 mb-5"
      style="
              {% if block.cover_image.active %}
-                 background-image:url('/assets/{{ block.cover_image.filename }}');
+                 background-size: cover;
+                 background-repeat: no-repeat;
+                 background-image:url('/{{ block.cover_image.filename }}');
                  background-position-x: {{ block.cover_image.position_x | default("center") }};
                  background-position-y: {{ block.cover_image.position_y | default("center") }};
                  color: white

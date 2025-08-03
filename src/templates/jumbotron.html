@@ -1,7 +1,9 @@
-<div class="text-bg-light bg-cover mb-5 py-5"
+<div class="text-bg-light mb-5 py-5"
      style="
              {% if block.cover_image.active %}
-                 background-image:url('/assets/{{ block.cover_image.filename }}');
+                 background-size: cover;
+                 background-repeat: no-repeat;
+                 background-image:url('/{{ block.cover_image.filename }}');
                  background-position-x: {{ block.cover_image.position_x | default('center') }};
                  background-position-y: {{ block.cover_image.position_y | default('center') }};
                  color: white
@@ -12,7 +14,7 @@
             <div class="col-8">
                 <div class="d-flex align-items-center gap-4 w-100">
                     {% if block.avatar.active %}
-                        <img src="/assets/{{ block.avatar.filename }}" class="rounded-circle"
+                        <img src="/{{ block.avatar.filename }}" class="rounded-circle"
                              alt="{{ block.person }}"
                              width="{{ block.avatar.width }}" height="{{ block.avatar.height }}"/>
                     {% endif %}
@@ -34,7 +36,7 @@
                             {% endfor %}
                         </div>
                         {% if block.cv.active %}
-                            <a href="/assets/{{ block.cv.filename }}"
+                            <a href="/{{ block.cv.filename }}"
                                class="btn btn-{{ block.text_color if block.text_color else 'primary' }} btn-sm mt-2"
                                download>
                                 <i class="bi bi-download"></i>
