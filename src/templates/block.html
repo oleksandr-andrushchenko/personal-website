@@ -1,12 +1,11 @@
 <div class="container mb-5" id="{{ block.id }}">
-    <h2 class="text-bg-dark d-inline-block py-1 px-3 mb-4">{{ block.header }}</h2>
-    {% set items_active = block['items'] | selectattr('active') | list %}
+    <h2 class="text-bg-dark d-inline-block py-1 px-3 mb-4">{{ block.header }} &mdash; {{ block["items"] | length }}</h2>
+    {% set items_active = block["items"] | selectattr("active") | sort(attribute="order") | list %}
     {% set items_visible = items_active[:block.items_visible_count] if block.items_visible_count else items_active %}
     {% set items_hidden = items_active[block.items_visible_count:] if block.items_visible_count else [] %}
     <div class="row">
-        {% set items = items_visible %}
         {% set salt = block.id %}
-        {% for item in items %}
+        {% for item in items_visible %}
             <div class="col col-{{ 12 // block.cols }}">
                 {% set index = loop.index %}
                 <div class="card text-bg-light mb-4">
@@ -26,9 +25,8 @@
         </button>
         <div class="collapse" id="{{ toggle_id }}">
             <div class="row py-3">
-                {% set items = items_hidden %}
                 {% set salt = block.id ~ '-hidden' %}
-                {% for item in items %}
+                {% for item in items_hidden %}
                     <div class="col col-{{ 12 // block.cols }}">
                         {% set index = loop.index %}
                         <div class="card text-bg-light mb-4">
