@@ -1,0 +1,23 @@
+<div class="text-bg-light bg-cover py-5 mb-5"
+     style="
+             {% if block.cover_image.active %}
+                 background-image:url('/assets/{{ block.cover_image.filename }}');
+                 background-position-x: {{ block.cover_image.position_x | default('center') }};
+                 background-position-y: {{ block.cover_image.position_y | default('center') }};
+                 color: white
+             {% endif %}
+             ">
+    <div class="container">
+        <figure class="text-{{ block.text_color if block.text_color else "body" }}">
+            <blockquote class="blockquote fs-2">
+                {{ block.quote }}
+            </blockquote>
+            <figcaption class="blockquote-footer text-{{ block.text_color if block.text_color else "body" }}">
+                {{ block.author }}
+                {% if block.source %}
+                    {{ block.source_in }} <cite title="Source Title">{{ block.source }}</cite>
+                {% endif %}
+            </figcaption>
+        </figure>
+    </div>
+</div>
