@@ -8,9 +8,8 @@ from utils import load_merged_routes
 BASE_URL = "http://localhost:8000"
 allowed_routes = load_merged_routes()
 
-SRC_DIR = Path(__file__).parent
-ASSET_DIR = SRC_DIR / "assets"
-OUTPUT_DIR = SRC_DIR.parent / "output"
+ASSET_DIR = Path(__file__).parent / "assets"
+OUTPUT_DIR = Path(__file__).parent.parent / "output"
 
 # Clean output directory
 if OUTPUT_DIR.exists():
@@ -22,17 +21,9 @@ if OUTPUT_DIR.exists():
 else:
     OUTPUT_DIR.mkdir(parents=True)
 
-# Copy assets
-DEFAULT_ASSETS = Path(__file__).parent / "assets"
-OUTPUT_ASSETS = OUTPUT_DIR / "assets"
-
-# Create output/assets folder
-OUTPUT_ASSETS.mkdir(parents=True, exist_ok=True)
-
-# Step 1: Copy all default assets
-if DEFAULT_ASSETS.exists():
-    shutil.copytree(DEFAULT_ASSETS, OUTPUT_ASSETS, dirs_exist_ok=True)
-    print("✅ Copied default assets")
+# Step 1: Copy assets
+shutil.copytree(ASSET_DIR, OUTPUT_DIR, dirs_exist_ok=True)
+print("✅ Copied assets")
 
 # Download each route from the web server
 for route in allowed_routes:
@@ -48,7 +39,7 @@ for route in allowed_routes:
 
         output_path = OUTPUT_DIR / relative_path
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(response.text, encoding="utf-8")
+        output_path.write_bytes(response.content)
 
         print(f"✅ Saved {url} → {output_path.relative_to(OUTPUT_DIR)}")
 
