@@ -2,17 +2,17 @@
      style="
              {% if block.cover_image.active %}
                  background-image:url('/assets/{{ block.cover_image.filename }}');
-                 background-position-x: {{ block.cover_image.position_x | default('center') }};
-                 background-position-y: {{ block.cover_image.position_y | default('center') }};
+                 background-position-x: {{ block.cover_image.position_x | default("center") }};
+                 background-position-y: {{ block.cover_image.position_y | default("center") }};
                  color: white
              {% endif %}
              ">
     <div class="container">
-        <div class="row text-{{ block.text_color if block.text_color else 'body' }}">
-            {% for stat in block.statistics | selectattr('active') %}
+        <div class="row text-{{ block.text_color if block.text_color else "body" }}">
+            {% for item in block["items"] | selectattr('active') %}
                 <div class="col col-3 text-center">
-                    <span class="h1">{{ stat.number }}</span>
-                    <div>{{ stat.header }}</div>
+                    <span class="h1">{{ item.number }}</span>
+                    <div>{{ item.header }}</div>
                 </div>
             {% endfor %}
         </div>
