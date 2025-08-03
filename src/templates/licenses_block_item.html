@@ -6,7 +6,12 @@
                  alt="{{ item.header }}"/>
         {% endif %}
         <div>
-            <h3 class="h4 card-title">{{ item.header }}</h3>
+            <h3 class="h4 card-title mb-0">
+                {{ item.header }}
+                {% if item.ongoing %}
+                    <span class="badge text-bg-info">{{ block.ongoing }}</span>
+                {% endif %}
+            </h3>
             <div class="card-text">{{ item.organization }}</div>
             {% if item.url %}
                 <div class="card-text">
@@ -16,15 +21,17 @@
                     </a>
                 </div>
             {% endif %}
-            <div class="card-text">
-                <small class="text-body-secondary">
-                    {{ block.issued }} {{ item.issuing_date|format_us_date }}
-                    {% if item.expiration_date %}
-                        &mdash; {{ block.expires }}
-                        {{ item.issuing_date|format_us_date }}
-                    {% endif %}
-                </small>
-            </div>
+            {% if item.issuing_date and item.expiration_date %}
+                <div class="card-text">
+                    <small class="text-body-secondary">
+                        {{ block.issued }} {{ item.issuing_date|format_us_date }}
+                        {% if item.expiration_date %}
+                            &mdash; {{ block.expires }}
+                            {{ item.issuing_date|format_us_date }}
+                        {% endif %}
+                    </small>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
