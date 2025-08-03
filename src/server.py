@@ -4,6 +4,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 from utils import load_merged_data, load_merged_routes, format_us_date, shuffle, format_date_range
+import re
 
 allowed_routes = load_merged_routes()
 
@@ -49,6 +50,30 @@ class RequestHandler(BaseHTTPRequestHandler):
             data = load_merged_data()
             data["__ctx__"] = data
             html = template.render(**data)
+
+            # Step 1: Collapse multiple spaces between tag attributes
+            def collapse_tag_attributes(match):
+                tag = match.group(0)
+                # Replace any whitespace (except inside quotes) with a single space
+                # Assumes tag does not span multiple lines unnecessarily
+                tag = re.sub(r'\s{2,}', ' ', tag)  # collapse multiple spaces
+                return tag
+
+            html = re.sub(r'<[^>]+>', collapse_tag_attributes, html)
+
+            # Step 2: Replace any whitespace between tags with a single space
+            html = re.sub(r'>\s+<', '> <', html)
+
+            # Step 3: Collapse internal content whitespace to one space
+            def collapse_content_whitespace(match):
+                text = match.group(1)
+                text = re.sub(r'\s+', ' ', text)
+                return f'>{text}<'
+
+            html = re.sub(r'>([^<]+)<', collapse_content_whitespace, html)
+
+            html = html.strip()
+
         except Exception as e:
             self.send_error(500, f"Error rendering template: {e}")
             return
