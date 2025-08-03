@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Static website on S3 + CloudFront + Route53 with tags
+Description: Static Website Hosting with Contact Form Handling via Lambda, SES, SNS
 
 Parameters:
   DomainName:
@@ -7,108 +7,162 @@ Parameters:
     Description: e.g. www.example.com
   HostedZoneId:
     Type: String
-    Description: Route53 Hosted Zone ID (not name)
-  CertificateArn:
+    Description: Route 53 Hosted Zone ID for your domain
+  NotificationEmail:
     Type: String
-    Description: ACM certificate ARN in us-east-1 for the domain
-
-  Environment:
+    Description: Email address to notify on form submission
+  NotificationPhone:
     Type: String
-    Default: production
-    AllowedValues:
-      - dev
-      - staging
-      - production
-  Project:
-    Type: String
-    Default: StaticWebsite
-  Owner:
-    Type: String
-    Default: WebTeam
-
-Tags: &Tags
-  - Key: Environment
-    Value: !Ref Environment
-  - Key: Project
-    Value: !Ref Project
-  - Key: Owner
-    Value: !Ref Owner
+    Description: Phone number for SMS (e.g. +15551234567)
 
 Resources:
-  WebsiteBucket:
+
+  SiteBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub "${DomainName}"
-      AccessControl: Private
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: 404.html
-      Tags: *Tags
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      AccessControl: PublicRead
 
-  WebsiteBucketPolicy:
+  BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref WebsiteBucket
+      Bucket: !Ref SiteBucket
       PolicyDocument:
         Statement:
-          - Sid: AllowCloudFrontServicePrincipal
-            Effect: Allow
-            Principal:
-              Service: cloudfront.amazonaws.com
-            Action: "s3:GetObject"
-            Resource: !Sub "${WebsiteBucket.Arn}/*"
-            Condition:
-              StringEquals:
-                AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${WebsiteDistribution}"
-      Tags: *Tags
+          - Effect: Allow
+            Principal: "*"
+            Action: s3:GetObject
+            Resource: !Sub "${SiteBucket.Arn}/*"
 
-  WebsiteOAC:
-    Type: AWS::CloudFront::OriginAccessControl
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
     Properties:
-      Name: !Sub "${DomainName}-OAC"
-      OriginAccessControlConfig:
-        OriginAccessControlOriginType: s3
-        SigningBehavior: always
-        SigningProtocol: sigv4
-        Description: Access control for S3 origin
-      Tags: *Tags
+      DomainName: !Ref DomainName
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref DomainName
+          HostedZoneId: !Ref HostedZoneId
 
-  WebsiteDistribution:
+  CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
+        Aliases: [!Ref DomainName]
         Enabled: true
-        Aliases:
-          - !Ref DomainName
         DefaultRootObject: index.html
-        ViewerCertificate:
-          AcmCertificateArn: !Ref CertificateArn
-          SslSupportMethod: sni-only
-          MinimumProtocolVersion: TLSv1.2_2021
         DefaultCacheBehavior:
-          TargetOriginId: S3Origin
+          TargetOriginId: s3Origin
           ViewerProtocolPolicy: redirect-to-https
-          AllowedMethods: [ GET, HEAD ]
-          CachedMethods: [ GET, HEAD ]
+          AllowedMethods: [GET, HEAD]
+          CachedMethods: [GET, HEAD]
           ForwardedValues:
             QueryString: false
-            Cookies:
-              Forward: none
         Origins:
-          - Id: S3Origin
-            DomainName: !GetAtt WebsiteBucket.RegionalDomainName
-            S3OriginConfig: { }
-            OriginAccessControlId: !Ref WebsiteOAC
-        PriceClass: PriceClass_100
-      Tags: *Tags
+          - Id: s3Origin
+            DomainName: !GetAtt SiteBucket.RegionalDomainName
+            S3OriginConfig: {}
+        ViewerCertificate:
+          AcmCertificateArn: !Ref Certificate
+          SslSupportMethod: sni-only
 
-  WebsiteDNSRecord:
+  DNSRecord:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneId: !Ref HostedZoneId
       Name: !Ref DomainName
       Type: A
       AliasTarget:
-        DNSName: !GetAtt WebsiteDistribution.DomainName
-        HostedZoneId: Z2FDTNDATAQYW2 # CloudFront global zone ID
-      # Note: Route53 RecordSet doesn't support Tags directly
+        DNSName: !GetAtt CloudFrontDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+
+  ContactFormTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+        - Protocol: email
+          Endpoint: !Ref NotificationEmail
+        - Protocol: sms
+          Endpoint: !Ref NotificationPhone
+
+  ContactFormLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ContactFormPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Ref ContactFormTopic
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  ContactFormLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: ContactFormHandler
+      Handler: index.handler
+      Role: !GetAtt ContactFormLambdaRole.Arn
+      Runtime: python3.12
+      Timeout: 10
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+
+          sns = boto3.client("sns")
+
+          def handler(event, context):
+              try:
+                  body = json.loads(event["body"])
+                  name = body.get("name")
+                  email = body.get("email")
+                  message = body.get("message")
+
+                  text = f"New contact form submission:\nName: {name}\nEmail: {email}\nMessage: {message}"
+
+                  sns.publish(
+                      TopicArn="${ContactFormTopic}",
+                      Message=text,
+                      Subject="New Contact Form Submission"
+                  )
+
+                  return {
+                      "statusCode": 200,
+                      "headers": {"Content-Type": "application/json"},
+                      "body": json.dumps({"message": "Message sent"})
+                  }
+              except Exception as e:
+                  return {
+                      "statusCode": 500,
+                      "body": json.dumps({"message": str(e)})
+                  }
+
+Outputs:
+  WebsiteURL:
+    Value: !Sub "https://${DomainName}"
+  FormLambdaName:
+    Value: !Ref ContactFormLambda
+  NotificationTopicArn:
+    Value: !Ref ContactFormTopic
