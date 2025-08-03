@@ -19,27 +19,35 @@ Resources:
   SiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${DomainName}"
+      BucketName: !Ref DomainName
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: 404.html
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: false
-        IgnorePublicAcls: false
-        RestrictPublicBuckets: false
-      AccessControl: PublicRead
+
+  OriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${DomainName}-oac"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref SiteBucket
       PolicyDocument:
+        Version: '2012-10-17'
         Statement:
           - Effect: Allow
-            Principal: "*"
+            Principal:
+              Service: cloudfront.amazonaws.com
             Action: s3:GetObject
             Resource: !Sub "${SiteBucket.Arn}/*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"
 
   Certificate:
     Type: AWS::CertificateManager::Certificate
@@ -68,6 +76,7 @@ Resources:
           - Id: s3Origin
             DomainName: !GetAtt SiteBucket.RegionalDomainName
             S3OriginConfig: { }
+            OriginAccessControlId: !GetAtt OriginAccessControl.Id
         ViewerCertificate:
           AcmCertificateArn: !Ref Certificate
           SslSupportMethod: sni-only
@@ -126,22 +135,53 @@ Resources:
       Runtime: python3.12
       Timeout: 10
       Code:
-        ZipFile: |
+        ZipFile: !Sub |
           import json
           import boto3
 
           sns = boto3.client("sns")
+          origin = "https://${DomainName}"
 
           def handler(event, context):
               try:
+                  allowed_origin = origin
+                  request_origin = event.get("headers", {}).get("origin", "")
+
+                  if request_origin != allowed_origin:
+                      return {
+                          "statusCode": 403,
+                          "headers": {
+                              "Access-Control-Allow-Origin": request_origin,
+                              "Access-Control-Allow-Methods": "POST,OPTIONS",
+                              "Access-Control-Allow-Headers": "Content-Type"
+                          },
+                          "body": json.dumps({"message": "Forbidden"})
+                      }
+
+                  method = event.get("requestContext", {}).get("http", {}).get("method")
+                  if method == "OPTIONS":
+                      return {
+                          "statusCode": 204,
+                          "headers": {
+                              "Access-Control-Allow-Origin": request_origin,
+                              "Access-Control-Allow-Methods": "POST,OPTIONS",
+                              "Access-Control-Allow-Headers": "Content-Type"
+                          }
+                      }
+
                   body = json.loads(event["body"])
-                  name = body.get("name") or body.get("name")
-                  email = body.get("email") or body.get("email")
-                  message = body.get("message") or body.get("message")
+                  name = body.get("name")
+                  email = body.get("email")
+                  message = body.get("message")
 
                   if not name or not email or not message:
                       return {
                           "statusCode": 400,
+                          "headers": {
+                              "Access-Control-Allow-Origin": request_origin,
+                              "Access-Control-Allow-Methods": "POST,OPTIONS",
+                              "Access-Control-Allow-Headers": "Content-Type"
+                          },
                           "body": json.dumps({"message": "Missing form fields"})
                       }
 
@@ -155,12 +195,22 @@ Resources:
 
                   return {
                       "statusCode": 200,
-                      "headers": {"Content-Type": "application/json"},
+                      "headers": {
+                          "Content-Type": "application/json",
+                          "Access-Control-Allow-Origin": request_origin,
+                          "Access-Control-Allow-Methods": "POST,OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type"
+                      },
                       "body": json.dumps({"message": "Message sent"})
                   }
               except Exception as e:
                   return {
                       "statusCode": 500,
+                      "headers": {
+                          "Access-Control-Allow-Origin": request_origin,
+                          "Access-Control-Allow-Methods": "POST,OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type"
+                      },
                       "body": json.dumps({"message": str(e)})
                   }
 
