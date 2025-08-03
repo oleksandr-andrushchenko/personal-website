@@ -16,7 +16,7 @@
                              alt="{{ block.person }}"
                              width="{{ block.avatar.width }}" height="{{ block.avatar.height }}"/>
                     {% endif %}
-                    <div class="text-{{ block.text_color | default('body') }}">
+                    <div class="text-{{ block.text_color if block.text_color else 'body' }}">
                         <div class="h5">
                             {{ block.hello }}
                             {{ block.i_am }}
@@ -28,14 +28,15 @@
                         <div class="h3 mt-3">
                             {% for social in block.socials | selectattr('active') %}
                                 <a href="{{ social.url }}"
-                                   class="fs-2 link-{{ block.text_color | default('primary')  }}"
+                                   class="fs-2 link-{{ block.text_color if block.text_color else 'primary' }}"
                                    target="_blank"><i
                                         class="bi bi-{{ social.icon }}"></i></a>
                             {% endfor %}
                         </div>
                         {% if block.cv.active %}
                             <a href="/assets/{{ block.cv.filename }}"
-                               class="btn btn-{{ block.text_color | default('primary') }} btn-sm mt-2" download>
+                               class="btn btn-{{ block.text_color if block.text_color else 'primary' }} btn-sm mt-2"
+                               download>
                                 <i class="bi bi-download"></i>
                                 {{ block.download_cv }}
                             </a>
@@ -43,7 +44,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4 d-flex align-items-center text-end fw-bold">
+            <div class="col-4 d-flex align-items-center text-end fw-bold text-{{ block.text_color if block.text_color else 'body' }}">
                 {{ __ctx__["about"]["summary"] }}
             </div>
         </div>
