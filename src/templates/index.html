@@ -6,7 +6,7 @@
         {% set ns._blocks = ns._blocks + [__ctx__[block_id]] %}
     {% endfor %}
 
-    {% for block in ns._blocks | selectattr('page_active') | sort(attribute='order') %}
+    {% for block in ns._blocks | selectattr("page_active") | sort(attribute="order") %}
         {% include block.id ~ ".html" with context %}
     {% endfor %}
 {% endblock %}
