@@ -4,8 +4,8 @@
 
     <title>{{ head.title }}</title>
 
-    {% if header.favicon.active %}
-        {% if header.favicon.generator == "realfavicongenerator" %}
+    {% if head.favicon and head.favicon.active %}
+        {% if head.favicon.generator == "realfavicongenerator" %}
             <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96"/>
             <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
             <link rel="shortcut icon" href="/favicon.ico"/>
