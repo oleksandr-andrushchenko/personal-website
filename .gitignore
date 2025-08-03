@@ -9,3 +9,4 @@
 /src/assets/*
 !/src/assets/style.css
 !/src/assets/app.js
+.env
