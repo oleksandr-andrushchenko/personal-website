@@ -16,7 +16,6 @@ Parameters:
     Description: Phone number for SMS (e.g. +15551234567)
 
 Resources:
-
   SiteBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -55,20 +54,20 @@ Resources:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
-        Aliases: [!Ref DomainName]
+        Aliases: [ !Ref DomainName ]
         Enabled: true
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           TargetOriginId: s3Origin
           ViewerProtocolPolicy: redirect-to-https
-          AllowedMethods: [GET, HEAD]
-          CachedMethods: [GET, HEAD]
+          AllowedMethods: [ GET, HEAD ]
+          CachedMethods: [ GET, HEAD ]
           ForwardedValues:
             QueryString: false
         Origins:
           - Id: s3Origin
             DomainName: !GetAtt SiteBucket.RegionalDomainName
-            S3OriginConfig: {}
+            S3OriginConfig: { }
         ViewerCertificate:
           AcmCertificateArn: !Ref Certificate
           SslSupportMethod: sni-only
@@ -136,9 +135,15 @@ Resources:
           def handler(event, context):
               try:
                   body = json.loads(event["body"])
-                  name = body.get("name")
-                  email = body.get("email")
-                  message = body.get("message")
+                  name = body.get("name") or body.get("name")
+                  email = body.get("email") or body.get("email")
+                  message = body.get("message") or body.get("message")
+
+                  if not name or not email or not message:
+                      return {
+                          "statusCode": 400,
+                          "body": json.dumps({"message": "Missing form fields"})
+                      }
 
                   text = f"New contact form submission:\nName: {name}\nEmail: {email}\nMessage: {message}"
 
