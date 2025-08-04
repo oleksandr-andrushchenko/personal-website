@@ -15,7 +15,7 @@
                 col-xxl-{{ 12 // (block.cols.xxl | default(3)) }}
             ">
                 {% set index = loop.index %}
-                <div class="card text-bg-light mb-4">
+                <div class="card mb-4">
                     {% include (block.id ~ "_block_item.html") with context %}
                 </div>
             </div>
@@ -43,7 +43,7 @@
                         col-xxl-{{ 12 // (block.cols.xxl | default(3)) }}
                     ">
                         {% set index = loop.index %}
-                        <div class="card text-bg-light mb-4">
+                        <div class="card mb-4">
                             {% include (block.id ~ "_block_item.html") with context %}
                         </div>
                     </div>
