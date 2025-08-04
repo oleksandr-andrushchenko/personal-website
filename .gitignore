@@ -8,3 +8,5 @@
 /.idea/
 /src/assets/*
 .env
+/src/bootstrap-5.3.7-dist
+/src/bootstrap-icons-1.13.1
