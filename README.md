@@ -35,3 +35,7 @@ make generate
 - add 404.html
 - add meta config: title, description, tags etc.
 - pass values from .env to .py scripts
+
+## Links
+
+- favicon generation: https://realfavicongenerator.net/
