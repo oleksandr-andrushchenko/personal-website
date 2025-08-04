@@ -3,6 +3,8 @@ from pathlib import Path
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import random
+import htmlmin
+import re
 
 
 def shuffle(value):
@@ -84,3 +86,30 @@ def load_merged_data():
 
     # Shallow merge: custom overrides default
     return {**default_data, **custom_data}
+
+
+def minify_html(html: str) -> str:
+    # Step 1: Minify using htmlmin
+    html = htmlmin.minify(
+        html,
+        remove_comments=True,
+        remove_empty_space=True,
+        remove_all_empty_space=True,
+        reduce_empty_attributes=True,
+        reduce_boolean_attributes=True,
+        remove_optional_attribute_quotes=True,
+        keep_pre=False
+    )
+
+    # Step 2: Normalize attribute values — collapse inner whitespace and strip leading/trailing
+    def clean_attr_value(match):
+        attr = match.group(1)
+        quote = match.group(2)
+        value = match.group(3)
+        cleaned = re.sub(r'\s+', ' ', value).strip()
+        return f'{attr}={quote}{cleaned}{quote}'
+
+    # This handles key="value with   spaces\nand lines"
+    html = re.sub(r'(\w+)=([\'"])(.*?)\2', clean_attr_value, html, flags=re.DOTALL)
+
+    return html.strip()
