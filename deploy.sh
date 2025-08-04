@@ -11,13 +11,16 @@ echo "🚀 Deploying CloudFormation stack for $DOMAIN_NAME..."
 
 aws cloudformation deploy \
   --template-file template.yaml \
-  --stack-name $STACK_NAME \
+  --stack-name "$STACK_NAME" \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides \
-    DomainName=$DOMAIN_NAME \
-    HostedZoneId=$HOSTED_ZONE_ID \
-    NotificationEmail=$NOTIFICATION_EMAIL \
-    NotificationPhone=$NOTIFICATION_PHONE
+    DomainName="$DOMAIN_NAME" \
+    HostedZoneId="$HOSTED_ZONE_ID" \
+    NotificationEmail="$NOTIFICATION_EMAIL" \
+    NotificationPhone="$NOTIFICATION_PHONE" \
+    TagProject="$TAG_PROJECT" \
+    TagOwner="$TAG_OWNER" \
+    TagEnvironment="$TAG_ENVIRONMENT"
   --tags \
     Project=$TAG_PROJECT \
     Owner=$TAG_OWNER \
