@@ -1,37 +1,31 @@
 <div class="container mb-5" id="{{ block.id }}">
     <h2 class="text-bg-dark d-inline-block py-1 px-3 mb-4">{{ block.header }}</h2>
     <div class="row">
-        <div class="col col-6">
-            <form class="row g-3 needs-validation" novalidate>
+        <div class="col-12 col-md-6">
+            <form class="row g-3" id="contact-form" novalidate>
                 <div class="col-12">
-                    <input type="text" class="form-control" id="name" placeholder="Your Name" required>
-                    <div class="invalid-feedback">
-                        Please enter your name.
-                    </div>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
+                    <div class="invalid-feedback">Please enter your name.</div>
                 </div>
                 <div class="col-12">
-                    <input type="email" class="form-control" id="email" placeholder="Your Email" required>
-                    <div class="invalid-feedback">
-                        Please enter a valid email address.
-                    </div>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Your Email" required>
+                    <div class="invalid-feedback">Please enter a valid email address.</div>
                 </div>
                 <div class="col-12">
-                    <textarea class="form-control" id="message" placeholder="Your Message" rows="10"
+                    <textarea class="form-control" id="message" name="message" placeholder="Your Message" rows="10"
                               required></textarea>
-                    <div class="invalid-feedback">
-                        Please enter a message.
-                    </div>
+                    <div class="invalid-feedback">Please enter a message.</div>
                 </div>
                 <div class="col-12">
-                    <button type="submit" class="btn btn-outline-secondary">
-                        Send Message
-                        <i class="bi bi-chevron-right"></i>
+                    <div id="form-status" class="alert d-none" role="alert"></div>
+                    <button type="submit" class="btn btn-outline-dark">
+                        Send Message <i class="bi bi-chevron-right"></i>
                     </button>
                 </div>
             </form>
-
         </div>
-        <div class="col col-6">
+
+        <div class="col-12 col-md-6 mt-5 mt-md-0">
             <h3 class="mb-4">Contact details</h3>
             <ul class="list-group list-group-flush">
                 {% if block.email %}
@@ -57,18 +51,50 @@
     </div>
 </div>
 
+
 <script>
-  (() => {
-    "use strict"
-    const forms = document.querySelectorAll(".needs-validation")
-    forms.forEach(form => {
-      form.addEventListener("submit", event => {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("#contact-form")
+    const statusDiv = document.getElementById("form-status")
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+
+      form.classList.add("was-validated")
+
+      if (!form.checkValidity()) {
+        return
+      }
+
+      const name = form.name.value.trim()
+      const email = form.email.value.trim()
+      const message = form.message.value.trim()
+
+      try {
+        const response = await fetch("{{ block.action_url }}", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({name, email, message})
+        })
+
+        const result = await response.json()
+
+        if (response.ok) {
+          statusDiv.className = "alert alert-success"
+          statusDiv.textContent = result.message || "Message sent!"
+          form.reset()
+          form.classList.remove("was-validated")
+        } else {
+          statusDiv.className = "alert alert-danger"
+          statusDiv.textContent = result.message || "Something went wrong."
         }
-        form.classList.add("was-validated")
-      }, false)
+      } catch (err) {
+        statusDiv.className = "alert alert-danger"
+        statusDiv.textContent = "Network error. Please try again."
+      }
+
+      statusDiv.classList.remove("d-none")
     })
-  })()
+  })
 </script>
