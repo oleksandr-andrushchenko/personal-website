@@ -26,15 +26,16 @@
         </div>
     </div>
 
-    <button class="btn btn-outline-secondary btn-sm" type="button"
+    <button class="btn btn-outline-dark btn-sm" type="button"
             data-bs-toggle="collapse"
             data-bs-target="#{{ toggle_id }}" aria-expanded="false"
             aria-controls="{{ toggle_id }}">
         <i class="bi bi-arrow-down-up"></i>
         {{ block.toggle_details }}
     </button>
+
     {% if item.url %}
-        <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
+        <a href="{{ item.url }}" class="btn btn-sm btn-outline-dark ms-1"
            target="_blank">
             {{ block.open_website }} <i class="bi bi-box-arrow-up-right"></i>
         </a>

@@ -1,24 +1,20 @@
-<div class="text-bg-light py-5 mb-5"
-     style="
-             {% if block.cover_image.active %}
-                 background-size: cover;
-                 background-repeat: no-repeat;
-                 background-image:url('/{{ block.cover_image.filename }}');
-                 background-position-x: {{ block.cover_image.position_x | default('center') }};
-                 background-position-y: {{ block.cover_image.position_y | default('center') }};
-                 color: white
-             {% endif %}
-             ">
+{% if block.cover_image.active %}
+    <style>
+        .bg-img-quote::before {
+            background-image: url('/{{ block.cover_image.filename }}');
+            background-position: {{ block.cover_image.position_x | default('center') }} {{ block.cover_image.position_y | default('center') }};
+        }
+    </style>
+{% endif %}
+
+<div class="text-bg-light py-5 mb-5 {{ "bg-img bg-img-quote" if block.cover_image.active else '' }}">
     <div class="container">
         <figure class="text-{{ block.text_color if block.text_color else "body" }}">
             <blockquote class="blockquote fs-2">
-                {{ block.quote }}
+                "{{ block.quote }}"
             </blockquote>
             <figcaption class="blockquote-footer text-{{ block.text_color if block.text_color else "body" }}">
-                {{ block.author }}
-                {% if block.source %}
-                    {{ block.source_in }} <cite title="Source Title">{{ block.source }}</cite>
-                {% endif %}
+                {{ block.author }}{% if block.source %}, <cite title="Source Title">{{ block.source }}</cite>{% endif %}
             </figcaption>
         </figure>
     </div>

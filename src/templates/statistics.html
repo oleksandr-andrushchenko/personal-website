@@ -1,14 +1,13 @@
-<div class="text-bg-light py-5 mb-5"
-     style="
-             {% if block.cover_image.active %}
-                 background-size: cover;
-                 background-repeat: no-repeat;
-                 background-image:url('/{{ block.cover_image.filename }}');
-                 background-position-x: {{ block.cover_image.position_x | default("center") }};
-                 background-position-y: {{ block.cover_image.position_y | default("center") }};
-                 color: white
-             {% endif %}
-             ">
+{% if block.cover_image.active %}
+    <style>
+        .bg-img-stat::before {
+            background-image: url('/{{ block.cover_image.filename }}');
+            background-position: {{ block.cover_image.position_x | default('center') }} {{ block.cover_image.position_y | default('center') }};
+        }
+    </style>
+{% endif %}
+
+<div class="text-bg-light py-5 mb-5 {{ "bg-img bg-img-stat" if block.cover_image.active else '' }}">
     <div class="container">
         <div class="row text-{{ block.text_color if block.text_color else "body" }}">
             {% for item in block["items"] | selectattr('active') %}

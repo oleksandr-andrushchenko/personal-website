@@ -1,52 +1,83 @@
-<div class="text-bg-light mb-5 py-5"
-     style="
-             {% if block.cover_image.active %}
-                 background-size: cover;
-                 background-repeat: no-repeat;
-                 background-image:url('/{{ block.cover_image.filename }}');
-                 background-position-x: {{ block.cover_image.position_x | default('center') }};
-                 background-position-y: {{ block.cover_image.position_y | default('center') }};
-                 color: white
-             {% endif %}
-             ">
+{% if block.cover_image.active %}
+    <style>
+        .bg-img-jumbotron::before {
+            background-image: url('/{{ block.cover_image.filename }}');
+            background-position: {{ block.cover_image.position_x | default('center') }} {{ block.cover_image.position_y | default('center') }};
+        }
+    </style>
+{% endif %}
+
+<div class="text-bg-light mb-5 py-5 {{ "bg-img bg-img-jumbotron" if block.cover_image.active else '' }}">
     <div class="container">
         <div class="row">
-            <div class="col-8">
-                <div class="d-flex align-items-center gap-4 w-100">
-                    {% if block.avatar.active %}
-                        <img src="/{{ block.avatar.filename }}" class="rounded-circle"
-                             alt="{{ block.person }}"
-                             width="{{ block.avatar.width }}" height="{{ block.avatar.height }}"/>
-                    {% endif %}
-                    <div class="text-{{ block.text_color if block.text_color else 'body' }}">
-                        <div class="h5">
-                            {{ block.hello }}
-                            {{ block.i_am }}
-                        </div>
+            {% if block.avatar_image.active %}
+                <div class="
+                    col offset-4 col-4
+                    offset-sm-4 col-sm-4
+                    offset-md-0 col-md-4 d-md-flex align-items-md-center
+                    col-lg-3
+                    col-xl-2
+                    col-xxl-2
+                ">
+                    <img src="/{{ block.avatar_image.filename }}" class="rounded-circle img-fluid d-block mx-auto"
+                         style="max-height: {{ block.avatar_image.height }}px; max-width: {{ block.avatar_image.width }}px;width: 100%;
+                                 height: auto" alt="{{ block.person }}"/>
+                </div>
+            {% endif %}
+            <div class="
+                col col-12 text-center {{ "mt-5" if block.avatar_image.active else "" }}
+                {{ "col-sm-12" if block.avatar_image.active else "col-sm-12" }}
+                {{ "col-md-8 mt-md-0 text-md-start" if block.avatar_image.active else "col-md-6" }} d-md-flex align-items-md-center
+                {{ "col-lg-9" if block.avatar_image.active else "text-lg-start" }}
+                col-xl-6
+                col-xxl-6
+            ">
+                <div class="text-{{ block.text_color if block.text_color else 'body' }}">
+                    {% if block.person %}
                         <h1>{{ block.person }}</h1>
+                    {% endif %}
+
+                    {% if block.occupation %}
                         <h2 class="h5 mt-2">
                             {{ block.occupation }}
                         </h2>
+                    {% endif %}
+
+                    {% if block.location %}
+                        <i class="bi bi-geo"></i>
+                        {{ block.location }}
+                    {% endif %}
+
+                    {% set social_items = block.socials | selectattr('active') | list %}
+                    {% if social_items %}
                         <div class="h3 mt-3">
-                            {% for social in block.socials | selectattr('active') %}
+                            {% for social in social_items %}
                                 <a href="{{ social.url }}"
-                                   class="fs-2 link-{{ block.text_color if block.text_color else 'primary' }}"
+                                   class="fs-2 link-{{ block.text_color if block.text_color else 'primary' }} me-2"
                                    target="_blank"><i
                                         class="bi bi-{{ social.icon }}"></i></a>
                             {% endfor %}
                         </div>
-                        {% if block.cv.active %}
-                            <a href="/{{ block.cv.filename }}"
-                               class="btn btn-{{ block.text_color if block.text_color else 'primary' }} btn-sm mt-2"
-                               download>
-                                <i class="bi bi-download"></i>
-                                {{ block.download_cv }}
-                            </a>
-                        {% endif %}
-                    </div>
+                    {% endif %}
+
+                    {% if block.cv.active %}
+                        <a href="/{{ block.cv.filename }}"
+                           class="btn btn-{{ block.text_color if block.text_color else 'primary' }} btn-sm mt-2"
+                           download>
+                            <i class="bi bi-download"></i>
+                            {{ block.download_cv }}
+                        </a>
+                    {% endif %}
                 </div>
             </div>
-            <div class="col-4 d-flex align-items-center text-end fw-bold text-{{ block.text_color if block.text_color else 'body' }}">
+            <div class="
+                col col-12 mt-5 text-center fw-bold text-{{ block.text_color if block.text_color else 'body' }}
+                col-sm-12
+                {{ "col-md-12" if block.avatar_image.active else "col-md-6 mt-md-0 d-md-flex align-items-md-center" }}
+                {{ "col-lg-12" if block.avatar_image.active else "col-lg-6 text-lg-end" }}
+                {{ "col-xl-4 mt-xl-0 text-xl-end d-xl-flex align-items-xl-center" if block.avatar_image.active else "col-xl-6" }}
+                {{ "col-xxl-4" if block.avatar_image.active else "col-xxl-6" }}
+            ">
                 {{ __ctx__["about"]["summary"] }}
             </div>
         </div>

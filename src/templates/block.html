@@ -6,7 +6,14 @@
     <div class="row">
         {% set salt = block.id %}
         {% for item in items_visible %}
-            <div class="col col-{{ 12 // block.cols }}">
+            <div class="
+                col col-12
+                col-sm-{{ 12 // (block.cols.sm | default(1)) }}
+                col-md-{{ 12 // (block.cols.md | default(2)) }}
+                col-lg-{{ 12 // (block.cols.lg | default(3)) }}
+                col-xl-{{ 12 // (block.cols.xl | default(3)) }}
+                col-xxl-{{ 12 // (block.cols.xxl | default(3)) }}
+            ">
                 {% set index = loop.index %}
                 <div class="card text-bg-light mb-4">
                     {% include (block.id ~ "_block_item.html") with context %}
@@ -16,7 +23,7 @@
     </div>
     {% if items_hidden %}
         {% set toggle_id = 'toggle-hidden-' ~ block.id %}
-        <button class="btn btn-outline-secondary btn-sm" type="button"
+        <button class="btn btn-outline-dark btn-sm" type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#{{ toggle_id }}" aria-expanded="false"
                 aria-controls="{{ toggle_id }}">
@@ -27,7 +34,14 @@
             <div class="row py-3">
                 {% set salt = block.id ~ '-hidden' %}
                 {% for item in items_hidden %}
-                    <div class="col col-{{ 12 // block.cols }}">
+                    <div class="
+                        col col-12
+                        col-sm-{{ 12 // (block.cols.sm | default(1)) }}
+                        col-md-{{ 12 // (block.cols.md | default(2)) }}
+                        col-lg-{{ 12 // (block.cols.lg | default(3)) }}
+                        col-xl-{{ 12 // (block.cols.xl | default(3)) }}
+                        col-xxl-{{ 12 // (block.cols.xxl | default(3)) }}
+                    ">
                         {% set index = loop.index %}
                         <div class="card text-bg-light mb-4">
                             {% include (block.id ~ "_block_item.html") with context %}

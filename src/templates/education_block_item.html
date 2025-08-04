@@ -7,7 +7,7 @@
                  alt="{{ item.school }}"/>
         {% endif %}
         <div>
-            <h3 class="h5 card-title">{{ item.school }}</h3>
+            <h3 class="h5 card-title mb-0">{{ item.school }}</h3>
         </div>
     </div>
     <div class="card-text">
@@ -15,7 +15,7 @@
     </div>
 
     {% if item.description %}
-        <button class="btn btn-outline-secondary btn-sm" type="button"
+        <button class="btn btn-outline-dark btn-sm" type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#{{ toggle_id }}" aria-expanded="false"
                 aria-controls="{{ toggle_id }}">
@@ -23,8 +23,9 @@
             {{ block.toggle_details }}
         </button>
     {% endif %}
+
     {% if item.url %}
-        <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
+        <a href="{{ item.url }}" class="btn btn-sm btn-outline-dark {{ "ms-1" if item.description else "" }}"
            target="_blank">
             {{ block.open_website }} <i class="bi bi-box-arrow-up-right"></i>
         </a>
