@@ -16,10 +16,16 @@ Parameters:
     Description: Phone number for SMS (e.g. +15551234567)
   TagProject:
     Type: String
+    Description: Logical project identifier (e.g. PersonalWebsite)
   TagOwner:
     Type: String
+    Description: Resource owner (e.g. Oleksandr)
   TagEnvironment:
     Type: String
+    Description: Deployment environment (e.g. Production)
+  TagRegion:
+    Type: String
+    Description: AWS region (e.g. us-west-2)
 
 Tags: &Tags
   - Key: Environment
@@ -28,6 +34,8 @@ Tags: &Tags
     Value: !Ref TagProject
   - Key: Owner
     Value: !Ref TagOwner
+  - Key: Region
+    Value: !Ref TagRegion
 
 Resources:
   SiteBucket:
@@ -37,6 +45,20 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: 404.html
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LoggingBucket
+        LogFilePrefix: "s3/"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
       Tags: *Tags
 
   OriginAccessControl:
@@ -60,7 +82,7 @@ Resources:
             Principal:
               Service: cloudfront.amazonaws.com
             Action: s3:GetObject
-            Resource: !Sub "${SiteBucket.Arn}/*"
+            Resource: !Sub "arn:aws:s3:::${DomainName}/*"
             Condition:
               StringEquals:
                 AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"
@@ -88,8 +110,13 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
           AllowedMethods: [ GET, HEAD ]
           CachedMethods: [ GET, HEAD ]
+          MinTTL: 0
+          DefaultTTL: 86400
+          MaxTTL: 31536000
           ForwardedValues:
             QueryString: false
+            Headers:
+              - Origin
         Origins:
           - Id: s3Origin
             DomainName: !GetAtt SiteBucket.RegionalDomainName
@@ -98,6 +125,10 @@ Resources:
         ViewerCertificate:
           AcmCertificateArn: !Ref Certificate
           SslSupportMethod: sni-only
+        Logging:
+          Bucket: !GetAtt LoggingBucket.DomainName
+          IncludeCookies: false
+          Prefix: "cloudfront/"
       Tags: *Tags
 
   DNSRecord:
@@ -121,9 +152,10 @@ Resources:
           Endpoint: !Ref NotificationPhone
       Tags: *Tags
 
-  ContactFormLambdaRole:
+  ContactFormFunctionRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub "${AWS::StackName}-ContactFormFunctionRole"
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -139,7 +171,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - sns:Publish
-                Resource: !Ref ContactFormTopic
+                Resource: !GetAtt ContactFormTopic.TopicArn
               - Effect: Allow
                 Action:
                   - logs:CreateLogGroup
@@ -148,21 +180,29 @@ Resources:
                 Resource: "*"
       Tags: *Tags
 
-  ContactFormLambda:
+  ContactFormFunction:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: ContactFormHandler
       Handler: index.handler
-      Role: !GetAtt ContactFormLambdaRole.Arn
+      Role: !GetAtt ContactFormFunctionRole.Arn
       Runtime: python3.12
       Timeout: 10
+      Environment:
+        Variables:
+          CONTACT_TOPIC_ARN: !Ref ContactFormTopic
+          ALLOWED_ORIGIN: !Sub "https://${DomainName}"
+      Tags: *Tags
       Code:
         ZipFile: !Sub |
           import json
           import boto3
+          import os
 
           sns = boto3.client("sns")
-          origin = "https://${DomainName}"
+          origin = os.environ["ALLOWED_ORIGIN"]
+          topic_arn = os.environ["CONTACT_TOPIC_ARN"]
+
 
           def handler(event, context):
               try:
@@ -187,7 +227,9 @@ Resources:
                           "headers": {
                               "Access-Control-Allow-Origin": request_origin,
                               "Access-Control-Allow-Methods": "POST,OPTIONS",
-                              "Access-Control-Allow-Headers": "Content-Type"
+                              "Access-Control-Allow-Headers": "Content-Type",
+                              "Content-Type": "application/json",
+                              "Content-Length": "0"
                           }
                       }
 
@@ -210,7 +252,7 @@ Resources:
                   text = f"New contact form submission:\nName: {name}\nEmail: {email}\nMessage: {message}"
 
                   sns.publish(
-                      TopicArn="${ContactFormTopic}",
+                      TopicArn=topic_arn,
                       Message=text,
                       Subject="New Contact Form Submission"
                   )
@@ -236,11 +278,71 @@ Resources:
                       "body": json.dumps({"message": str(e)})
                   }
 
+
+  ContactFormFunctionUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      AuthType: NONE
+      TargetFunctionArn: !GetAtt ContactFormFunction.Arn
+      Cors:
+        AllowOrigins:
+          - !Sub "https://${DomainName}"
+        AllowMethods: [ "POST", "OPTIONS" ]
+        AllowHeaders: [ "Content-Type" ]
+        MaxAge: 86400
+
+  ContactFormFunctionUrlPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunctionUrl
+      FunctionName: !Ref ContactFormFunction
+      Principal: "*"
+      FunctionUrlAuthType: NONE
+
+  LoggingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${DomainName}-logs"
+      AccessControl: LogDeliveryWrite
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
       Tags: *Tags
+
+  ContactFormFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${ContactFormFunction}"
+      RetentionInDays: 14  # or 3, 7, 30, 90, etc.
+      Tags: *Tags
+
 Outputs:
   WebsiteURL:
     Value: !Sub "https://${DomainName}"
+  CloudFrontURL:
+    Value: !GetAtt CloudFrontDistribution.DomainName
+    Description: Direct CloudFront URL
   FormLambdaName:
-    Value: !Ref ContactFormLambda
+    Value: !Ref ContactFormFunction
   NotificationTopicArn:
     Value: !Ref ContactFormTopic
+  LoggingBucketName:
+    Value: !Ref LoggingBucket
+    Description: S3 bucket where logs for S3 + CloudFront are stored
+  ContactFormFunctionRoleName:
+    Value: !Ref ContactFormFunctionRole
+    Description: IAM Role name for the Lambda contact form handler
+  LambdaLogGroupName:
+    Value: !Ref ContactFormFunctionLogGroup
+    Description: CloudWatch log group for the contact form Lambda
+  ContactFormEndpoint:
+    Description: Public HTTPS endpoint for contact form
+    Value: !GetAtt ContactFormFunctionUrl.FunctionUrl

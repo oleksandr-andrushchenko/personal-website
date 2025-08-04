@@ -7,7 +7,7 @@ deploy:
 	bash deploy.sh
 
 sync:
-	aws s3 sync ./$(WEBSITE_DIR) s3://$(DOMAIN_NAME) --delete
+	aws s3 sync ./$(WEBSITE_DIR) s3://$(DOMAIN_NAME) --delete --profile $(AWS_PROFILE_NAME) --region $(AWS_REGION)
 
 clean:
 	rm -rf .aws-sam build

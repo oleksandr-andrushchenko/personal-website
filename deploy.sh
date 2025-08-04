@@ -1,15 +1,15 @@
 #!/bin/bash
 
 set -e
-
 source .env
 
-STACK_NAME=static-website-contact
 BUCKET_NAME=$DOMAIN_NAME
 
 echo "🚀 Deploying CloudFormation stack for $DOMAIN_NAME..."
 
 aws cloudformation deploy \
+  --profile "$AWS_PROFILE_NAME" \
+  --region "$AWS_REGION" \
   --template-file template.yaml \
   --stack-name "$STACK_NAME" \
   --capabilities CAPABILITY_NAMED_IAM \
@@ -20,29 +20,30 @@ aws cloudformation deploy \
     NotificationPhone="$NOTIFICATION_PHONE" \
     TagProject="$TAG_PROJECT" \
     TagOwner="$TAG_OWNER" \
-    TagEnvironment="$TAG_ENVIRONMENT"
+    TagEnvironment="$TAG_ENVIRONMENT" \
+    TagRegion="$AWS_REGION" \
   --tags \
-    Project=$TAG_PROJECT \
-    Owner=$TAG_OWNER \
-    Environment=$TAG_ENVIRONMENT
+    Project="$TAG_PROJECT" \
+    Owner="$TAG_OWNER" \
+    Environment="$TAG_ENVIRONMENT"
 
-echo "✅ Stack deployed. Syncing website files to S3..."
-
-aws s3 sync ./$WEBSITE_DIR s3://$BUCKET_NAME --delete
-
-echo "🔄 Waiting for CloudFront distribution to propagate..."
-
-DISTRIBUTION_ID=$(aws cloudfront list-distributions \
-  --query "DistributionList.Items[?Aliases.Items[?contains(@, '$DOMAIN_NAME')]].Id" \
-  --output text)
-
-if [ -n "$DISTRIBUTION_ID" ]; then
-  echo "⚡ Invalidating CloudFront cache for distribution $DISTRIBUTION_ID..."
-  aws cloudfront create-invalidation \
-    --distribution-id "$DISTRIBUTION_ID" \
-    --paths "/*"
-else
-  echo "⚠️  CloudFront distribution not found for $DOMAIN_NAME — skipping invalidation."
-fi
-
-echo "✅ Website deployed and cache invalidated."
+#echo "✅ Stack deployed. Syncing website files to S3..."
+#
+#aws s3 sync ./$WEBSITE_DIR s3://$BUCKET_NAME --delete
+#
+#echo "🔄 Waiting for CloudFront distribution to propagate..."
+#
+#DISTRIBUTION_ID=$(aws cloudfront list-distributions \
+#  --query "DistributionList.Items[?Aliases.Items[?contains(@, '$DOMAIN_NAME')]].Id" \
+#  --output text)
+#
+#if [ -n "$DISTRIBUTION_ID" ]; then
+#  echo "⚡ Invalidating CloudFront cache for distribution $DISTRIBUTION_ID..."
+#  aws cloudfront create-invalidation \
+#    --distribution-id "$DISTRIBUTION_ID" \
+#    --paths "/*"
+#else
+#  echo "⚠️  CloudFront distribution not found for $DOMAIN_NAME — skipping invalidation."
+#fi
+#
+#echo "✅ Website deployed and cache invalidated."
