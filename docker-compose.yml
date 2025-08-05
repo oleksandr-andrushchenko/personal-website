@@ -8,6 +8,7 @@ services:
       - ./src:/app                     # source code (templates, scripts, default assets/routes)
       - ./data.json:/data.json         # custom data (root-level)
       - ./routes.json:/routes.json     # custom routes (root-level)
+      - ./routes.json:/routes.json     # custom routes (root-level)
       - ./output:/output               # export location (optional but recommended)
       - ./.env:/.env:ro       # 🔥 mount real .env without copying
     working_dir: /app

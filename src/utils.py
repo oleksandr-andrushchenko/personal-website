@@ -64,8 +64,8 @@ def load_merged_routes():
     default_path = Path(__file__).parent / "routes.json"
     custom_path = Path(__file__).parent.parent / "routes.json"
 
-    default_routes = []
-    custom_routes = []
+    default_routes = {}
+    custom_routes = {}
 
     if default_path.exists():
         default_routes = json.loads(default_path.read_text(encoding="utf-8"))
@@ -73,8 +73,7 @@ def load_merged_routes():
         custom_routes = json.loads(custom_path.read_text(encoding="utf-8"))
 
     # Combine and deduplicate
-    merged = sorted(set(default_routes + custom_routes))
-    return merged
+    return {**default_routes, **custom_routes}
 
 
 def load_merged_data():

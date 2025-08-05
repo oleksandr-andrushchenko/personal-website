@@ -33,13 +33,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             return
 
         # Map route to template path
-        if route == "/":
-            template_rel_path = "index.html"
-        else:
-            rel_path = route.lstrip("/")
-            if rel_path.endswith("/"):
-                rel_path += "index.html"
-            template_rel_path = rel_path
+        template_rel_path = allowed_routes.get(route)
 
         template_path = TEMPLATE_DIR / template_rel_path
         if not template_path.exists():
