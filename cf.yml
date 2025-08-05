@@ -118,6 +118,11 @@ Resources:
           Bucket: !GetAtt LoggingBucket.DomainName
           IncludeCookies: false
           Prefix: "cloudfront/"
+        CustomErrorResponses:
+          - ErrorCode: 404
+            ResponsePagePath: "/404.html"
+            ResponseCode: 404
+            ErrorCachingMinTTL: 300
       Tags:
         - Key: Environment
           Value: !Ref TagEnvironment

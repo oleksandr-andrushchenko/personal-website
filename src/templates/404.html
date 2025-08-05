@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="d-flex justify-content-center
+				align-items-center">
+        <div class="col-md-12 text-center">
+            <h1>404</h1>
+
+            <h2>Page Not Found</h2>
+
+            <p>{{ not_found.sorry }}</p>
+
+            <a href="/" class="btn btn-primary btn-sm">
+                <i class="bi bi-arrow-return-left"></i>
+                {{ not_found.go_home }}
+            </a>
+        </div>
+    </div>
+{% endblock %}
