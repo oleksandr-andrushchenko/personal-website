@@ -28,7 +28,7 @@
                 col-xl-2
                 col-xxl-2
             ">
-                <img src="/{{ item.image_filename }}" class="rounded img-fluid"
+                <img src="/{{ item.image_filename }}" class="img-fluid"
                      style="max-height:{{ block.image.height }}px; max-width:{{ block.image.width }}px"
                      alt="{{ item.company }}"/>
             </div>
@@ -66,7 +66,7 @@
             {% if item.url %}
                 <a href="{{ item.url }}" class="btn btn-sm btn-outline-dark"
                    target="_blank">
-                    {{ block.open_experience }} <i class="bi bi-box-arrow-up-right"></i>
+                    {{ block.open_company }} <i class="bi bi-box-arrow-up-right"></i>
                 </a>
             {% endif %}
         </div>

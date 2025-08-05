@@ -57,10 +57,17 @@
             position: absolute;
             inset: 0;
             z-index: -1;
-            background-color: rgba(0, 0, 0, 0.5);
             background-size: cover;
             background-repeat: no-repeat;
+        }
+
+        .bg-img-dark::before {
+            background-color: rgba(0, 0, 0, 0.5);
             background-blend-mode: darken;
+        }
+
+        .bg-img-light::before {
+            opacity: .5;
         }
 
         body, * {

@@ -28,7 +28,7 @@
         </div>
     {% endif %}
 
-    <div class="text-bg-light py-5 mt-n5 {{ "bg-img bg-img-jumbotron" if block.cover_image.active else '' }}">
+    <div class="text-bg-light py-5 mt-n5 {{ ("bg-img bg-img-jumbotron bg-img-" ~ block.cover_image.bg_color | default("light")) if block.cover_image.active else '' }}">
         <div class="container">
             <div class="row">
                 {% if block.avatar_image.active %}
