@@ -4,7 +4,7 @@ ifneq (,$(wildcard .env))
   export
 endif
 
-.PHONY: deploy-cert get-cert-arn deploy-infra get-infra-details destroy-infra deploy-site invalidate clean up down rebuild login logs generate open
+.PHONY: deploy-cert get-cert-arn deploy-infra get-infra-details destroy-infra deploy-site invalidate up down rebuild login logs generate open
 
 DC = docker-compose
 CONTAINER = personal-website-generator
@@ -146,9 +146,6 @@ invalidate:
 	else \
 		echo "⚠️  CloudFront distribution not found for $(DOMAIN_NAME) — skipping invalidation."; \
 	fi
-
-clean:
-	rm -rf .aws-sam build
 
 up:
 	$(DC) up -d --remove-orphans
