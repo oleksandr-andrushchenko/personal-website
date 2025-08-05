@@ -1,27 +1,29 @@
 # Personal website
 
-## Deploy example
-```
-aws cloudformation deploy \
-  --template-file website.yaml \
-  --stack-name static-website-stack \
-  --parameter-overrides \
-    DomainName=www.example.com \
-    HostedZoneId=Z123456ABCDEFG \
-    CertificateArn=arn:aws:acm:us-east-1:123456789012:certificate/abc-123... \
-    Environment=production \
-    Project=MarketingPortal \
-    Owner=Oleksandr
-  --capabilities CAPABILITY_NAMED_IAM
-
-aws s3 sync ./dist/ s3://www.example.com --delete
-```
-
 ## Workflow example
+
+You should have AWS account and "aws" client installed and configured.
+So in the end you should have these files: ~/.aws/credentials and ~/.aws/config
+
 ```
-make up        # starts webserver.py
-make open      # opens http://localhost:8000
-make generate
+make up                 # raise up docker container(-s)
+make logs               # display docker container logs
+make login              # bash into docker container
+make open               # open http://localhost:8000
+cp .env.example .env    # create default .env
+vim .env                # update .env (or nano .env)
+vim data.json           # update data.json (or nano data.json)
+make generate           # generates website folder ready to test locally and then upload to S3, default= ./output
+make deploy-cert        # deploy cert for HTTPs (AWS)
+make get-cert-arn       # display cert and update .env
+make deploy-infra       # deploy infra (AWS)
+make get-infra-details  # display deployed infra, for debug purposes, usually if smth went wrong
+make destroy-infra      # (if deploy has been failed use this one) desroy failed infra (AWS), then after usually - update cf.yml and redeploy infra
+make get-lambda-url     # display contact form lambda url and update .env
+make deploy-site        # deploy website (upload website folder to S3)
+make invalidate         # clear cache (AWS, cloud front distribution)
+make down               # drop docker container(-s)
+
 ```
 
 ## TODO
@@ -30,11 +32,7 @@ make generate
 - add markings (type=person and other details)
 - disable indexing of websites and images (3rd parties)
 - update Linkedin: move responsibilities to projects, sync with personal website
-- mobile/table ui/ux
-- add favicon
 - add 404.html
-- add meta config: title, description, tags etc.
-- pass values from .env to .py scripts
 
 ## Links
 
