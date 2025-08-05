@@ -9,17 +9,10 @@ topic_arn = os.environ["CONTACT_TOPIC_ARN"]
 
 def handler(event, context):
     try:
-        allowed_origin = origin
         request_origin = event.get("headers", {}).get("origin", "")
-
-        if request_origin != allowed_origin:
+        if request_origin != origin:
             return {
                 "statusCode": 403,
-                "headers": {
-                    "Access-Control-Allow-Origin": request_origin,
-                    "Access-Control-Allow-Methods": "POST,OPTIONS",
-                    "Access-Control-Allow-Headers": "Content-Type"
-                },
                 "body": json.dumps({"message": "Forbidden"})
             }
 
@@ -27,13 +20,7 @@ def handler(event, context):
         if method == "OPTIONS":
             return {
                 "statusCode": 204,
-                "headers": {
-                    "Access-Control-Allow-Origin": request_origin,
-                    "Access-Control-Allow-Methods": "POST,OPTIONS",
-                    "Access-Control-Allow-Headers": "Content-Type",
-                    "Content-Type": "application/json",
-                    "Content-Length": "0"
-                }
+                "body": ""
             }
 
         body = json.loads(event["body"])
@@ -44,11 +31,6 @@ def handler(event, context):
         if not name or not email or not message:
             return {
                 "statusCode": 400,
-                "headers": {
-                    "Access-Control-Allow-Origin": request_origin,
-                    "Access-Control-Allow-Methods": "POST,OPTIONS",
-                    "Access-Control-Allow-Headers": "Content-Type"
-                },
                 "body": json.dumps({"message": "Missing form fields"})
             }
 
@@ -62,21 +44,11 @@ def handler(event, context):
 
         return {
             "statusCode": 200,
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": request_origin,
-                "Access-Control-Allow-Methods": "POST,OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type"
-            },
             "body": json.dumps({"message": "Message sent"})
         }
+
     except Exception as e:
         return {
             "statusCode": 500,
-            "headers": {
-                "Access-Control-Allow-Origin": request_origin,
-                "Access-Control-Allow-Methods": "POST,OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type"
-            },
             "body": json.dumps({"message": str(e)})
         }

@@ -3,8 +3,9 @@ import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
-from utils import load_merged_data, load_merged_routes, format_us_date, shuffle, format_date_range, minify_html
-import re
+from utils import load_merged_data, load_merged_routes, format_us_date, shuffle, format_date_range, minify_html, \
+    reload_env_vars
+import os
 
 allowed_routes = load_merged_routes()
 
@@ -46,8 +47,10 @@ class RequestHandler(BaseHTTPRequestHandler):
             return
 
         try:
+            reload_env_vars()
             template = env.get_template(template_rel_path)
             data = load_merged_data()
+            data["env"] = dict(os.environ)
             data["__ctx__"] = data
             html = template.render(**data)
             html = minify_html(html)

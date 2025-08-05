@@ -8,6 +8,9 @@ Parameters:
   HostedZoneId:
     Type: String
     Description: Route 53 Hosted Zone ID for your domain
+  CertificateArn:
+    Type: String
+    Description: ARN of the ACM certificate in us-east-1 for CloudFront
   NotificationEmail:
     Type: String
     Description: Email address to notify on form submission
@@ -26,16 +29,6 @@ Parameters:
   TagRegion:
     Type: String
     Description: AWS region (e.g. us-west-2)
-
-Tags: &Tags
-  - Key: Environment
-    Value: !Ref TagEnvironment
-  - Key: Project
-    Value: !Ref TagProject
-  - Key: Owner
-    Value: !Ref TagOwner
-  - Key: Region
-    Value: !Ref TagRegion
 
 Resources:
   SiteBucket:
@@ -59,7 +52,15 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-      Tags: *Tags
+      Tags:
+        - Key: Environment
+          Value: !Ref TagEnvironment
+        - Key: Project
+          Value: !Ref TagProject
+        - Key: Owner
+          Value: !Ref TagOwner
+        - Key: Region
+          Value: !Ref TagRegion
 
   OriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl
@@ -69,7 +70,6 @@ Resources:
         OriginAccessControlOriginType: s3
         SigningBehavior: always
         SigningProtocol: sigv4
-      Tags: *Tags
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -86,17 +86,6 @@ Resources:
             Condition:
               StringEquals:
                 AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"
-      Tags: *Tags
-
-  Certificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: !Ref DomainName
-      ValidationMethod: DNS
-      DomainValidationOptions:
-        - DomainName: !Ref DomainName
-          HostedZoneId: !Ref HostedZoneId
-      Tags: *Tags
 
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -123,13 +112,21 @@ Resources:
             S3OriginConfig: { }
             OriginAccessControlId: !GetAtt OriginAccessControl.Id
         ViewerCertificate:
-          AcmCertificateArn: !Ref Certificate
+          AcmCertificateArn: !Ref CertificateArn
           SslSupportMethod: sni-only
         Logging:
           Bucket: !GetAtt LoggingBucket.DomainName
           IncludeCookies: false
           Prefix: "cloudfront/"
-      Tags: *Tags
+      Tags:
+        - Key: Environment
+          Value: !Ref TagEnvironment
+        - Key: Project
+          Value: !Ref TagProject
+        - Key: Owner
+          Value: !Ref TagOwner
+        - Key: Region
+          Value: !Ref TagRegion
 
   DNSRecord:
     Type: AWS::Route53::RecordSet
@@ -140,7 +137,6 @@ Resources:
       AliasTarget:
         DNSName: !GetAtt CloudFrontDistribution.DomainName
         HostedZoneId: Z2FDTNDATAQYW2
-      Tags: *Tags
 
   ContactFormTopic:
     Type: AWS::SNS::Topic
@@ -150,7 +146,15 @@ Resources:
           Endpoint: !Ref NotificationEmail
         - Protocol: sms
           Endpoint: !Ref NotificationPhone
-      Tags: *Tags
+      Tags:
+        - Key: Environment
+          Value: !Ref TagEnvironment
+        - Key: Project
+          Value: !Ref TagProject
+        - Key: Owner
+          Value: !Ref TagOwner
+        - Key: Region
+          Value: !Ref TagRegion
 
   ContactFormFunctionRole:
     Type: AWS::IAM::Role
@@ -178,7 +182,15 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: "*"
-      Tags: *Tags
+      Tags:
+        - Key: Environment
+          Value: !Ref TagEnvironment
+        - Key: Project
+          Value: !Ref TagProject
+        - Key: Owner
+          Value: !Ref TagOwner
+        - Key: Region
+          Value: !Ref TagRegion
 
   ContactFormFunction:
     Type: AWS::Lambda::Function
@@ -192,7 +204,15 @@ Resources:
         Variables:
           CONTACT_TOPIC_ARN: !Ref ContactFormTopic
           ALLOWED_ORIGIN: !Sub "https://${DomainName}"
-      Tags: *Tags
+      Tags:
+        - Key: Environment
+          Value: !Ref TagEnvironment
+        - Key: Project
+          Value: !Ref TagProject
+        - Key: Owner
+          Value: !Ref TagOwner
+        - Key: Region
+          Value: !Ref TagRegion
       Code:
         ZipFile: !Sub |
           import json
@@ -203,20 +223,12 @@ Resources:
           origin = os.environ["ALLOWED_ORIGIN"]
           topic_arn = os.environ["CONTACT_TOPIC_ARN"]
 
-
           def handler(event, context):
               try:
-                  allowed_origin = origin
                   request_origin = event.get("headers", {}).get("origin", "")
-
-                  if request_origin != allowed_origin:
+                  if request_origin != origin:
                       return {
                           "statusCode": 403,
-                          "headers": {
-                              "Access-Control-Allow-Origin": request_origin,
-                              "Access-Control-Allow-Methods": "POST,OPTIONS",
-                              "Access-Control-Allow-Headers": "Content-Type"
-                          },
                           "body": json.dumps({"message": "Forbidden"})
                       }
 
@@ -224,13 +236,7 @@ Resources:
                   if method == "OPTIONS":
                       return {
                           "statusCode": 204,
-                          "headers": {
-                              "Access-Control-Allow-Origin": request_origin,
-                              "Access-Control-Allow-Methods": "POST,OPTIONS",
-                              "Access-Control-Allow-Headers": "Content-Type",
-                              "Content-Type": "application/json",
-                              "Content-Length": "0"
-                          }
+                          "body": ""
                       }
 
                   body = json.loads(event["body"])
@@ -241,11 +247,6 @@ Resources:
                   if not name or not email or not message:
                       return {
                           "statusCode": 400,
-                          "headers": {
-                              "Access-Control-Allow-Origin": request_origin,
-                              "Access-Control-Allow-Methods": "POST,OPTIONS",
-                              "Access-Control-Allow-Headers": "Content-Type"
-                          },
                           "body": json.dumps({"message": "Missing form fields"})
                       }
 
@@ -259,22 +260,11 @@ Resources:
 
                   return {
                       "statusCode": 200,
-                      "headers": {
-                          "Content-Type": "application/json",
-                          "Access-Control-Allow-Origin": request_origin,
-                          "Access-Control-Allow-Methods": "POST,OPTIONS",
-                          "Access-Control-Allow-Headers": "Content-Type"
-                      },
                       "body": json.dumps({"message": "Message sent"})
                   }
               except Exception as e:
                   return {
                       "statusCode": 500,
-                      "headers": {
-                          "Access-Control-Allow-Origin": request_origin,
-                          "Access-Control-Allow-Methods": "POST,OPTIONS",
-                          "Access-Control-Allow-Headers": "Content-Type"
-                      },
                       "body": json.dumps({"message": str(e)})
                   }
 
@@ -287,7 +277,7 @@ Resources:
       Cors:
         AllowOrigins:
           - !Sub "https://${DomainName}"
-        AllowMethods: [ "POST", "OPTIONS" ]
+        AllowMethods: [ "POST" ]
         AllowHeaders: [ "Content-Type" ]
         MaxAge: 86400
 
@@ -303,11 +293,13 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub "${DomainName}-logs"
-      AccessControl: LogDeliveryWrite
+      OwnershipControls: # 👈 Required
+        Rules:
+          - ObjectOwnership: ObjectWriter
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
-        IgnorePublicAcls: true
+        IgnorePublicAcls: false     # 👈 Allow ACLs to be honored
         RestrictPublicBuckets: true
       VersioningConfiguration:
         Status: Enabled
@@ -315,14 +307,30 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-      Tags: *Tags
+      Tags:
+        - Key: Environment
+          Value: !Ref TagEnvironment
+        - Key: Project
+          Value: !Ref TagProject
+        - Key: Owner
+          Value: !Ref TagOwner
+        - Key: Region
+          Value: !Ref TagRegion
 
   ContactFormFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub "/aws/lambda/${ContactFormFunction}"
       RetentionInDays: 14  # or 3, 7, 30, 90, etc.
-      Tags: *Tags
+      Tags:
+        - Key: Environment
+          Value: !Ref TagEnvironment
+        - Key: Project
+          Value: !Ref TagProject
+        - Key: Owner
+          Value: !Ref TagOwner
+        - Key: Region
+          Value: !Ref TagRegion
 
 Outputs:
   WebsiteURL:

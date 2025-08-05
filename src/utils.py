@@ -5,6 +5,11 @@ from dateutil.relativedelta import relativedelta
 import random
 import htmlmin
 import re
+from dotenv import load_dotenv
+
+
+def reload_env_vars():
+    load_dotenv(dotenv_path="/.env", override=True)
 
 
 def shuffle(value):
