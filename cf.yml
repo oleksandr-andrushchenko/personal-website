@@ -62,30 +62,25 @@ Resources:
         - Key: Region
           Value: !Ref TagRegion
 
-  OriginAccessControl:
-    Type: AWS::CloudFront::OriginAccessControl
-    Properties:
-      OriginAccessControlConfig:
-        Name: !Sub "${DomainName}-oac"
-        OriginAccessControlOriginType: s3
-        SigningBehavior: always
-        SigningProtocol: sigv4
-
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref SiteBucket
       PolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
-          - Effect: Allow
+          - Sid: AllowCloudFrontOAI
+            Effect: Allow
             Principal:
-              Service: cloudfront.amazonaws.com
+              AWS: !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontOAI}"
             Action: s3:GetObject
             Resource: !Sub "arn:aws:s3:::${DomainName}/*"
-            Condition:
-              StringEquals:
-                AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"
+
+  CloudFrontOAI:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub "Access Identity for ${DomainName}"
 
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -108,9 +103,9 @@ Resources:
               - Origin
         Origins:
           - Id: s3Origin
-            DomainName: !GetAtt SiteBucket.RegionalDomainName
-            S3OriginConfig: { }
-            OriginAccessControlId: !GetAtt OriginAccessControl.Id
+            DomainName: !Sub "${DomainName}.s3.amazonaws.com"
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOAI}"
         ViewerCertificate:
           AcmCertificateArn: !Ref CertificateArn
           SslSupportMethod: sni-only
@@ -119,6 +114,10 @@ Resources:
           IncludeCookies: false
           Prefix: "cloudfront/"
         CustomErrorResponses:
+          - ErrorCode: 403
+            ResponsePagePath: "/404.html"
+            ResponseCode: 404
+            ErrorCachingMinTTL: 300
           - ErrorCode: 404
             ResponsePagePath: "/404.html"
             ResponseCode: 404
@@ -343,6 +342,9 @@ Outputs:
   CloudFrontURL:
     Value: !GetAtt CloudFrontDistribution.DomainName
     Description: Direct CloudFront URL
+  CloudFrontDistributionId:
+    Value: !GetAtt CloudFrontDistribution.Id
+    Description: The CloudFront distribution ID
   FormLambdaName:
     Value: !Ref ContactFormFunction
   NotificationTopicArn:
