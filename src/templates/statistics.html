@@ -7,11 +7,18 @@
     </style>
 {% endif %}
 
-<div class="text-bg-light py-5 mb-5 {{ "bg-img bg-img-stat" if block.cover_image.active else '' }}">
+<div class="text-bg-light py-4 {{ "bg-img bg-img-stat" if block.cover_image.active else '' }}">
     <div class="container">
         <div class="row text-{{ block.text_color if block.text_color else "body" }}">
             {% for item in block["items"] | selectattr('active') %}
-                <div class="col col-3 text-center">
+                <div class="
+                    col col-6 text-center py-3
+                    col-sm-{{ 12 // (block.cols.sm | default(1)) }}
+                    col-md-{{ 12 // (block.cols.md | default(2)) }}
+                    col-lg-{{ 12 // (block.cols.lg | default(3)) }}
+                    col-xl-{{ 12 // (block.cols.xl | default(3)) }}
+                    col-xxl-{{ 12 // (block.cols.xxl | default(3)) }}
+                ">
                     <span class="h1">{{ item.number }}</span>
                     <div>{{ item.header }}</div>
                 </div>

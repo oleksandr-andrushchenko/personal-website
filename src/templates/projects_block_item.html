@@ -7,27 +7,69 @@
     {% set experience_item = {} %}
 {% endif %}
 
-<div class="card-body">
-    <div class="d-flex align-items-start gap-3 mb-2">
+<div class="
+    card-body d-flex flex-column gap-2
+    gap-sm-2
+    gap-md-2
+    gap-xl-2
+    gap-xxl-2
+">
+    <div class="
+        row g-2
+        g-sm-2
+        g-md-3
+        g-xl-3
+        g-xxl-3
+    ">
         {% if item.image_filename or experience_item.image_filename %}
-            <img src="/{{ item.image_filename if item.image_filename else experience_item.image_filename }}"
-                 class="rounded"
-                 style="max-height: {{ block.image.height }}px; max-width: {{ block.image.width }}px"
-                 alt="{{ item.project }}"/>
+            <div class="
+                col col-2
+                col-sm-2
+                col-md-2
+                col-xl-2
+                col-xxl-2
+            ">
+                <img src="/{{ item.image_filename if item.image_filename else experience_item.image_filename }}"
+                     class="rounded img-fluid"
+                     alt="{{ item.project }}"/>
+            </div>
         {% endif %}
-        <div>
+
+        <div class="
+            col {{ "col-10" if item.image_filename or experience_item.image_filename else "col-12" }}
+            {{ "col-sm-10" if item.image_filename or experience_item.image_filename else "col-sm-12" }}
+            {{ "col-md-10" if item.image_filename or experience_item.image_filename else "col-md-12" }}
+            {{ "col-xl-10" if item.image_filename or experience_item.image_filename else "col-xl-12" }}
+            {{ "col-xxl-10" if item.image_filename or experience_item.image_filename else "col-xxl-12" }}
+        ">
             <h3 class="h4 card-title mb-0">
                 {{ item.project }}
+
+                {% if item.founder %}
+                    <span class="badge text-bg-primary me-1">{{ block.founder }}</span>
+                {% endif %}
+
+                {% if item.cofounder %}
+                    <span class="badge text-bg-primary me-1">{{ block.cofounder }}</span>
+                {% endif %}
+
+                {% if item.startup %}
+                    <span class="badge text-bg-success me-1">{{ block.startup }}</span>
+                {% endif %}
+
                 {% if item.ongoing %}
-                    <span class="badge text-bg-info">{{ block.ongoing }}</span>
+                    <span class="badge text-bg-info me-1">{{ block.ongoing }}</span>
                 {% endif %}
-                {% if item.retired %}
-                    <span class="badge text-bg-danger">{{ block.retired }}</span>
-                {% endif %}
+
                 {% if item.private %}
-                    <span class="badge text-bg-warning">{{ block.private }}</span>
+                    <span class="badge text-bg-warning me-1">{{ block.private }}</span>
+                {% endif %}
+
+                {% if item.retired %}
+                    <span class="badge text-bg-danger me-1">{{ block.retired }}</span>
                 {% endif %}
             </h3>
+
             <div class="card-text">
                 {{ item.description }}
                 <br>
@@ -36,74 +78,81 @@
         </div>
     </div>
 
-    <button class="btn btn-outline-dark btn-sm" type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#{{ toggle_id }}" aria-expanded="false"
-            aria-controls="{{ toggle_id }}">
-        <i class="bi bi-arrow-down-up"></i>
-        {{ block.toggle_details }}
-    </button>
+    <div class="d-flex flex-column gap-1">
+        <div class="d-flex gap-1">
+            <button class="btn btn-outline-dark btn-sm" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#{{ toggle_id }}" aria-expanded="false"
+                    aria-controls="{{ toggle_id }}">
+                <i class="bi bi-arrow-down-up"></i>
+                {{ block.toggle_details }}
+            </button>
 
-    {% if item.url %}
-        <a href="{{ item.url }}" class="btn btn-sm btn-outline-dark ms-1"
-           target="_blank">
-            {{ block.open_website }} <i class="bi bi-box-arrow-up-right"></i>
-        </a>
-    {% endif %}
-
-    <div class="collapse" id="{{ toggle_id }}">
-        <div class="py-3">
-            {% if experience_item %}
-                <div class="card-text">
-                    <small class="text-body-secondary">
-                        {{ block.associated_with }} <b>{{ experience_item.company }}</b>
-                        {% if experience_item.url %}
-                            <a href="{{ experience_item.url }}" class="btn btn-sm btn-outline-dark ms-1"
-                               target="_blank">
-                                {{ __ctx__["experience"].open_website }} <i class="bi bi-box-arrow-up-right"></i>
-                            </a>
-                        {% endif %}
-                    </small>
-                </div>
-            {% endif %}
-            {% if item.responsibilities %}
-                <div class="card-text">
-                    <ul class="mb-0">
-                        {% for responsibility in item.responsibilities %}
-                            <li>{{ responsibility }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-            {% if item.tags %}
-                <div class="card-text">
-                    <small class="text-body-secondary">
-                        <i class="bi bi-tags"></i>
-                        {{ item.tags | join(' · ') }}
-                    </small>
-                </div>
+            {% if item.url %}
+                <a href="{{ item.url }}" class="btn btn-sm btn-outline-dark"
+                   target="_blank">
+                    {{ block.open_website }} <i class="bi bi-box-arrow-up-right"></i>
+                </a>
             {% endif %}
         </div>
-    </div>
 
-    {% if item.start_date %}
-        <div class="card-text">
-            <small class="text-body-secondary">
-                <i class="bi bi-calendar"></i>
-                {{ item.start_date | date_range(item.end_date) }}
-            </small>
-        </div>
-    {% endif %}
-
-    {% if item.location %}
-        <div class="card-text">
-            <small class="text-body-secondary">
-                <i class="bi bi-geo"></i>
-                {{ item.location }}
-                {% if item.location_type %}
-                    · {{ item.location_type }}
+        <div class="collapse" id="{{ toggle_id }}">
+            <div class="d-flex flex-column gap-1 py-2">
+                {% if experience_item %}
+                    <div class="card-text">
+                        <small class="text-body-secondary">
+                            {{ block.associated_with }} <b>{{ experience_item.company }}</b>
+                            {% if experience_item.url %}
+                                <a href="{{ experience_item.url }}" class="btn btn-sm btn-outline-dark ms-1"
+                                   target="_blank">
+                                    {{ __ctx__["experience"].open_website }} <i
+                                        class="bi bi-box-arrow-up-right"></i>
+                                </a>
+                            {% endif %}
+                        </small>
+                    </div>
                 {% endif %}
-            </small>
+
+                {% if item.responsibilities %}
+                    <div class="card-text">
+                        <ul class="mb-0">
+                            {% for responsibility in item.responsibilities %}
+                                <li>{{ responsibility }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                {% if item.tags %}
+                    <div class="card-text">
+                        <small class="text-body-secondary">
+                            <i class="bi bi-tags"></i>
+                            {{ item.tags | join(' · ') }}
+                        </small>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    {% endif %}
+
+        {% if item.start_date %}
+            <div class="card-text">
+                <small class="text-body-secondary">
+                    <i class="bi bi-calendar"></i>
+                    {{ item.start_date | date_range(item.end_date) }}
+                </small>
+            </div>
+        {% endif %}
+
+        {% if item.location %}
+            <div class="card-text">
+                <small class="text-body-secondary">
+                    <i class="bi bi-geo"></i>
+                    {{ item.location }}
+                    {% if item.location_type %}
+                        · {{ item.location_type }}
+                    {% endif %}
+                </small>
+            </div>
+        {% endif %}
+    </div>
 </div>

@@ -7,78 +7,89 @@
     </style>
 {% endif %}
 
-<div class="text-bg-light mb-5 py-5 {{ "bg-img bg-img-jumbotron" if block.cover_image.active else '' }}">
-    <div class="container">
-        <div class="row">
-            {% if block.avatar_image.active %}
-                <div class="
+
+<div>
+    {% if block.greetings and block.greetings.active %}
+        <div class="text-bg-warning py-2">
+            <div class="container">
+                {% if block.greetings.hello %}
+                    <div class="mb-0 text-center text-xl-start">
+                        <small>
+                            <i class="bi bi-person-arms-up"></i>
+                            {{ block.greetings.hello }}
+                            <a href="{{ __ctx__["contact"].href }}" class="btn btn-dark btn-sm ms-2">
+                                {{ block.greetings.contact }}
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="text-bg-light py-5 mt-n5 {{ "bg-img bg-img-jumbotron" if block.cover_image.active else '' }}">
+        <div class="container">
+            <div class="row">
+                {% if block.avatar_image.active %}
+                    <div class="
                     col offset-4 col-4
                     offset-sm-4 col-sm-4
-                    offset-md-0 col-md-4 d-md-flex align-items-md-center
+                    offset-md-0 col-md-4
                     col-lg-3
                     col-xl-2
                     col-xxl-2
                 ">
-                    <img src="/{{ block.avatar_image.filename }}" class="rounded-circle img-fluid d-block mx-auto"
-                         style="max-height: {{ block.avatar_image.height }}px; max-width: {{ block.avatar_image.width }}px;width: 100%;
-                                 height: auto" alt="{{ block.person }}"/>
+                        <img src="/{{ block.avatar_image.filename }}" class="rounded-circle img-fluid d-block mx-auto"
+                             style="max-height: {{ block.avatar_image.height }}px; max-width: {{ block.avatar_image.width }}px;width: 100%;
+                                     height: auto" alt="{{ block.person }}"/>
+                    </div>
+                {% endif %}
+                <div class="
+                    col col-12 text-center {{ "mt-3" if block.avatar_image.active else "" }}
+                    {{ "col-sm-12" if block.avatar_image.active else "col-sm-12" }}
+                    {{ "col-md-8 mt-md-0 text-md-start" if block.avatar_image.active else "col-md-6" }} d-md-flex align-items-md-center
+                    {{ "col-lg-9" if block.avatar_image.active else "text-lg-start" }}
+                    {{ "col-xl-10" if block.avatar_image.active else "" }}
+                    {{ "col-xxl-10" if block.avatar_image.active else "" }}
+                ">
+                    <div class="text-{{ block.text_color if block.text_color else 'body' }}">
+                        {% if block.person %}
+                            <h1>{{ block.person }}</h1>
+                        {% endif %}
+
+                        {% if block.occupation %}
+                            <h2 class="h5">
+                                {{ block.occupation }}
+                            </h2>
+                        {% endif %}
+
+                        {% if block.location %}
+                            <i class="bi bi-geo"></i>
+                            {{ block.location }}
+                        {% endif %}
+
+                        {% set social_items = block.socials | selectattr('active') | list %}
+                        {% if social_items %}
+                            <div>
+                                {% for social in social_items %}
+                                    <a href="{{ social.url }}"
+                                       class="fs-2 link-{{ block.text_color if block.text_color else 'primary' }} me-2"
+                                       target="_blank"><i class="bi bi-{{ social.icon }}"></i></a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {% if block.cv.active %}
+                            <a href="/{{ block.cv.filename }}"
+                               class="btn btn-{{ block.text_color if block.text_color else 'primary' }} btn-sm mt-2"
+                               download>
+                                <i class="bi bi-download"></i>
+                                {{ block.download_cv }}
+                            </a>
+                        {% endif %}
+                    </div>
                 </div>
-            {% endif %}
-            <div class="
-                col col-12 text-center {{ "mt-5" if block.avatar_image.active else "" }}
-                {{ "col-sm-12" if block.avatar_image.active else "col-sm-12" }}
-                {{ "col-md-8 mt-md-0 text-md-start" if block.avatar_image.active else "col-md-6" }} d-md-flex align-items-md-center
-                {{ "col-lg-9" if block.avatar_image.active else "text-lg-start" }}
-                col-xl-6
-                col-xxl-6
-            ">
-                <div class="text-{{ block.text_color if block.text_color else 'body' }}">
-                    {% if block.person %}
-                        <h1>{{ block.person }}</h1>
-                    {% endif %}
-
-                    {% if block.occupation %}
-                        <h2 class="h5 mt-2">
-                            {{ block.occupation }}
-                        </h2>
-                    {% endif %}
-
-                    {% if block.location %}
-                        <i class="bi bi-geo"></i>
-                        {{ block.location }}
-                    {% endif %}
-
-                    {% set social_items = block.socials | selectattr('active') | list %}
-                    {% if social_items %}
-                        <div class="h3 mt-3">
-                            {% for social in social_items %}
-                                <a href="{{ social.url }}"
-                                   class="fs-2 link-{{ block.text_color if block.text_color else 'primary' }} me-2"
-                                   target="_blank"><i
-                                        class="bi bi-{{ social.icon }}"></i></a>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-
-                    {% if block.cv.active %}
-                        <a href="/{{ block.cv.filename }}"
-                           class="btn btn-{{ block.text_color if block.text_color else 'primary' }} btn-sm mt-2"
-                           download>
-                            <i class="bi bi-download"></i>
-                            {{ block.download_cv }}
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="
-                col col-12 mt-5 text-center fw-bold text-{{ block.text_color if block.text_color else 'body' }}
-                col-sm-12
-                {{ "col-md-12" if block.avatar_image.active else "col-md-6 mt-md-0 d-md-flex align-items-md-center" }}
-                {{ "col-lg-12" if block.avatar_image.active else "col-lg-6 text-lg-end" }}
-                {{ "col-xl-4 mt-xl-0 text-xl-end d-xl-flex align-items-xl-center" if block.avatar_image.active else "col-xl-6" }}
-                {{ "col-xxl-4" if block.avatar_image.active else "col-xxl-6" }}
-            ">
-                {{ __ctx__["about"]["summary"] }}
             </div>
         </div>
     </div>

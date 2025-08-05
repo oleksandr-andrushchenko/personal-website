@@ -7,13 +7,14 @@
     </style>
 {% endif %}
 
-<div class="text-bg-light py-5 mb-5 {{ "bg-img bg-img-quote" if block.cover_image.active else '' }}">
+<div class="text-bg-light py-4 {{ "bg-img bg-img-quote" if block.cover_image.active else '' }}">
     <div class="container">
-        <figure class="text-{{ block.text_color if block.text_color else "body" }}">
-            <blockquote class="blockquote fs-2">
-                "{{ block.quote }}"
+        <figure class="mb-0 text-{{ block.text_color if block.text_color else "body" }} d-flex flex-column gap-2">
+            <blockquote class="h2">
+                <i class="bi bi-quote"></i>
+                {{ block.quote }}
             </blockquote>
-            <figcaption class="blockquote-footer text-{{ block.text_color if block.text_color else "body" }}">
+            <figcaption class="blockquote-footer mb-0 text-{{ block.text_color if block.text_color else "body" }}">
                 {{ block.author }}{% if block.source %}, <cite title="Source Title">{{ block.source }}</cite>{% endif %}
             </figcaption>
         </figure>

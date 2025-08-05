@@ -1,64 +1,97 @@
 {% set toggle_id = 'toggle-details-' ~ salt ~ '-' ~ index %}
-<div class="card-body">
-    <div class="d-flex align-items-start gap-3 mb-2">
+
+<div class="
+    card-body d-flex flex-column gap-2
+    gap-sm-2
+    gap-md-2
+    gap-xl-2
+    gap-xxl-2
+">
+    <div class="
+        row g-2
+        g-sm-2
+        g-md-3
+        g-xl-3
+        g-xxl-3
+    ">
         {% if item.image_filename %}
-            <img src="/{{ item.image_filename }}" class="rounded"
-                 width="{{ block.image.width }}" height="{{ block.image.height }}"
-                 alt="{{ item.school }}"/>
+            <div class="
+                col col-2
+                col-sm-2
+                col-md-2
+                col-xl-2
+                col-xxl-2
+            ">
+                <img src="/{{ item.image_filename }}" class="rounded img-fluid"
+                     style="max-height:{{ block.image.height }}px; max-width:{{ block.image.width }}px"
+                     alt="{{ item.school }}"/>
+            </div>
         {% endif %}
-        <div>
+
+        <div class="
+            col {{ "col-10" if item.image_filename else "col-12" }}
+            {{ "col-sm-10" if item.image_filename else "col-sm-12" }}
+            {{ "col-md-10" if item.image_filename else "col-md-12" }}
+            {{ "col-xl-10" if item.image_filename else "col-xl-12" }}
+            {{ "col-xxl-10" if item.image_filename else "col-xxl-12" }}
+        ">
             <h3 class="h5 card-title mb-0">{{ item.school }}</h3>
         </div>
     </div>
-    <div class="card-text">
-        <b class="fw-bold">{{ item.degree }}</b>{{ (', ' ~ item.field) if item.field else '' }}
-    </div>
 
-    {% if item.description %}
-        <button class="btn btn-outline-dark btn-sm" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#{{ toggle_id }}" aria-expanded="false"
-                aria-controls="{{ toggle_id }}">
-            <i class="bi bi-arrow-down-up"></i>
-            {{ block.toggle_details }}
-        </button>
-    {% endif %}
+    <div class="d-flex flex-column gap-1">
+        <div class="card-text">
+            <b class="fw-bold">{{ item.degree }}</b>{{ (', ' ~ item.field) if item.field else '' }}
+        </div>
 
-    {% if item.url %}
-        <a href="{{ item.url }}" class="btn btn-sm btn-outline-dark {{ "ms-1" if item.description else "" }}"
-           target="_blank">
-            {{ block.open_website }} <i class="bi bi-box-arrow-up-right"></i>
-        </a>
-    {% endif %}
+        <div class="d-flex gap-1">
+            {% if item.description %}
+                <button class="btn btn-outline-dark btn-sm" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#{{ toggle_id }}" aria-expanded="false"
+                        aria-controls="{{ toggle_id }}">
+                    <i class="bi bi-arrow-down-up"></i>
+                    {{ block.toggle_details }}
+                </button>
+            {% endif %}
 
-    {% if item.description %}
-        <div class="collapse" id="{{ toggle_id }}">
-            <div class="py-3">
-                <div class="card-text">
-                    {{ item.description }}
+            {% if item.url %}
+                <a href="{{ item.url }}" class="btn btn-sm btn-outline-dark"
+                   target="_blank">
+                    {{ block.open_website }} <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+            {% endif %}
+        </div>
+
+        {% if item.description %}
+            <div class="collapse" id="{{ toggle_id }}">
+                <div class="d-flex flex-column gap-1 py-2">
+                    <div class="card-text">
+                        {{ item.description }}
+                    </div>
                 </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
 
-    {% if item.start_date %}
-        <div class="card-text">
-            <small class="text-body-secondary">
-                <i class="bi bi-calendar"></i>
-                {{ item.start_date | date_range(item.end_date) }}
-            </small>
-        </div>
-    {% endif %}
+        {% if item.start_date %}
+            <div class="card-text">
+                <small class="text-body-secondary">
+                    <i class="bi bi-calendar"></i>
+                    {{ item.start_date | date_range(item.end_date) }}
+                </small>
+            </div>
+        {% endif %}
 
-    {% if item.location %}
-        <div class="card-text">
-            <small class="text-body-secondary">
-                <i class="bi bi-geo"></i>
-                {{ item.location }}
-                {% if item.location_type %}
-                    · {{ item.location_type }}
-                {% endif %}
-            </small>
-        </div>
-    {% endif %}
+        {% if item.location %}
+            <div class="card-text">
+                <small class="text-body-secondary">
+                    <i class="bi bi-geo"></i>
+                    {{ item.location }}
+                    {% if item.location_type %}
+                        · {{ item.location_type }}
+                    {% endif %}
+                </small>
+            </div>
+        {% endif %}
+    </div>
 </div>

@@ -1,5 +1,16 @@
-<footer class="mt-auto bg-light">
-    <div class="container">
+<footer class="mt-auto bg-light text-center text-md-start">
+    <div class="container py-3">
         &copy; {{ footer.current_year }} {{ footer.person }}
+
+        {% set social_items = __ctx__["jumbotron"].socials | selectattr('active') | list %}
+        {% if social_items %}
+            <div class="h3 mt-3">
+                {% for social in social_items %}
+                    <a href="{{ social.url }}" class="link-dark me-2" target="_blank">
+                        <i class="bi bi-{{ social.icon }}"></i>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 </footer>

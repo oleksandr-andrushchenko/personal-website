@@ -1,4 +1,4 @@
-<div class="container mb-5" id="{{ block.id }}">
+<div class="container" id="{{ block.id }}">
     <h2 class="text-bg-dark d-inline-block py-1 px-3 mb-4">{{ block.header }}</h2>
     <div class="row">
         <div class="col-12 col-md-6">
@@ -25,32 +25,31 @@
             </form>
         </div>
 
-        <div class="col-12 col-md-6 mt-5 mt-md-0">
+        <div class="col-12 col-md-6 mt-5 mt-md-0 text-center text-md-start">
             <h3 class="mb-4">Contact details</h3>
-            <ul class="list-group list-group-flush">
+            <div class="d-flex flex-column gap-3">
                 {% if block.email %}
-                    <li class="list-group-item">
+                    <div>
                         Email
                         <div class="fw-bold">{{ block.email }}</div>
-                    </li>
+                    </div>
                 {% endif %}
                 {% if block.phone %}
-                    <li class="list-group-item">
+                    <div>
                         Phone
                         <div class="fw-bold">{{ block.phone }}</div>
-                    </li>
+                    </div>
                 {% endif %}
                 {% if block.address %}
-                    <li class="list-group-item">
+                    <div>
                         Address
                         <div class="fw-bold">{{ block.address.replace('\n', '<br>') | safe }}</div>
-                    </li>
+                    </div>
                 {% endif %}
-            </ul>
+            </div>
         </div>
     </div>
 </div>
-
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
@@ -72,7 +71,7 @@
       const message = form.message.value.trim()
 
       try {
-        const response = await fetch("{{ block.action_url }}", {
+        const response = await fetch("{{ env.LAMBDA_URL }}", {
           method: "POST",
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify({name, email, message})

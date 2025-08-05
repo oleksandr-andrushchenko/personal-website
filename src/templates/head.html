@@ -4,6 +4,12 @@
 
     <title>{{ head.title }}</title>
 
+    {% if head.meta %}
+        {% for key, val in head.meta.items() %}
+            <meta name="{{ key }}" content="{{ val }}"/>
+        {% endfor %}
+    {% endif %}
+
     {% if head.favicon and head.favicon.active %}
         {% if head.favicon.generator == "realfavicongenerator" %}
             <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96"/>
@@ -17,6 +23,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Oswald:wght@200..700&display=swap">
 
     <style>
         .bg-img {
@@ -34,7 +46,14 @@
             background-repeat: no-repeat;
             background-blend-mode: darken;
         }
+
+        body, * {
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 {
+            font-family: "Oswald", sans-serif;
+            font-optical-sizing: auto;
+        }
     </style>
-
-
 </head>

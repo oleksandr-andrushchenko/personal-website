@@ -1,9 +1,25 @@
-<div class="container mb-5" id="{{ block.id }}">
-    <h2 class="text-bg-dark d-inline-block py-1 px-3 mb-4">{{ block.header }} &mdash; {{ block["items"] | length }}</h2>
-    {% set items_active = block["items"] | selectattr("active") | sort(attribute="order") | list %}
-    {% set items_visible = items_active[:block.items_visible_count] if block.items_visible_count else items_active %}
-    {% set items_hidden = items_active[block.items_visible_count:] if block.items_visible_count else [] %}
-    <div class="row">
+{% set items_active = block["items"] | selectattr("active") | sort(attribute="order") | list %}
+{% set items_visible = items_active[:block.items_visible_count] if block.items_visible_count else items_active %}
+{% set items_hidden = items_active[block.items_visible_count:] if block.items_visible_count else [] %}
+
+<div class="container" id="{{ block.id }}">
+    <h2 class="
+        text-bg-dark d-inline-block py-1 px-3 mb-1
+        mb-sm-1
+        mb-md-2
+        mb-xl-3
+        mb-xxl-3
+    ">
+        {{ block.header }} &mdash; {{ block["items"] | length }}
+    </h2>
+
+    <div class="
+        row g-1
+        g-sm-1
+        g-md-2
+        g-xl-3
+        g-xxl-3
+    ">
         {% set salt = block.id %}
         {% for item in items_visible %}
             <div class="
@@ -15,23 +31,32 @@
                 col-xxl-{{ 12 // (block.cols.xxl | default(3)) }}
             ">
                 {% set index = loop.index %}
-                <div class="card mb-4">
+
+                <div class="card bg-light">
                     {% include (block.id ~ "_block_item.html") with context %}
                 </div>
             </div>
         {% endfor %}
     </div>
+
     {% if items_hidden %}
         {% set toggle_id = 'toggle-hidden-' ~ block.id %}
-        <button class="btn btn-outline-dark btn-sm" type="button"
+        <button class="btn btn-outline-dark btn-sm mt-2" type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#{{ toggle_id }}" aria-expanded="false"
                 aria-controls="{{ toggle_id }}">
             <i class="bi bi-arrow-down-up"></i>
             {{ block.toggle_hidden }}
         </button>
+
         <div class="collapse" id="{{ toggle_id }}">
-            <div class="row py-3">
+            <div class="
+                row g-1 py-3
+                g-sm-1
+                g-md-2
+                g-xl-3
+                g-xxl-3
+            ">
                 {% set salt = block.id ~ '-hidden' %}
                 {% for item in items_hidden %}
                     <div class="
@@ -43,7 +68,7 @@
                         col-xxl-{{ 12 // (block.cols.xxl | default(3)) }}
                     ">
                         {% set index = loop.index %}
-                        <div class="card mb-4">
+                        <div class="card bg-light">
                             {% include (block.id ~ "_block_item.html") with context %}
                         </div>
                     </div>

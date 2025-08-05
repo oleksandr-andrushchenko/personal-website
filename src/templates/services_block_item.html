@@ -1,10 +1,14 @@
-<div class="card-body">
-    <div class="d-flex align-items-start gap-3 mb-2">
+<div class="card-body d-flex flex-column gap-1">
+    <div class="d-flex align-items-start gap-2">
         <i class="bi bi-{{ item.icon }} fs-1"></i>
         <h3 class="h4 card-title mb-0">{{ item.header }}</h3>
     </div>
-    <p class="card-text">{{ item.description }}</p>
-    <a href="{{ block.button_url }}" class="btn btn-outline-dark btn-sm">
-        Contact <i class="bi bi-chevron-right"></i>
-    </a>
+
+    <p class="card-text mb-0">{{ item.description }}</p>
+
+    <div>
+        <a href="{{ block.button_url }}" class="btn btn-outline-dark btn-sm">
+            {{ block.contact }} <i class="bi bi-chevron-right"></i>
+        </a>
+    </div>
 </div>
