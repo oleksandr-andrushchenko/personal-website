@@ -91,7 +91,7 @@
             {% if item.url %}
                 <a href="{{ item.url }}" class="btn btn-sm btn-outline-dark"
                    target="_blank">
-                    {{ block.open_website }} <i class="bi bi-box-arrow-up-right"></i>
+                    {{ block.open_project }} <i class="bi bi-box-arrow-up-right"></i>
                 </a>
             {% endif %}
         </div>
@@ -105,7 +105,7 @@
                             {% if experience_item.url %}
                                 <a href="{{ experience_item.url }}" class="btn btn-sm btn-outline-dark ms-1"
                                    target="_blank">
-                                    {{ __ctx__["experience"].open_website }} <i
+                                    {{ block.open_company }} <i
                                         class="bi bi-box-arrow-up-right"></i>
                                 </a>
                             {% endif %}

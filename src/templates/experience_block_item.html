@@ -66,7 +66,7 @@
             {% if item.url %}
                 <a href="{{ item.url }}" class="btn btn-sm btn-outline-dark"
                    target="_blank">
-                    {{ block.open_website }} <i class="bi bi-box-arrow-up-right"></i>
+                    {{ block.open_experience }} <i class="bi bi-box-arrow-up-right"></i>
                 </a>
             {% endif %}
         </div>
@@ -76,7 +76,22 @@
                 {% for project in project_items %}
                     <div class="card-text">
                         <div class="h5 mb-0">Project #{{ loop.index }}: {{ project.project }}</div>
-                        <small class="text-body-secondary">{{ project.position }}</small>
+
+                        {% if project.url %}
+                            <div>
+                                <a href="{{ project.url }}" class="btn btn-sm btn-outline-dark"
+                                   target="_blank">
+                                    {{ block.open_project }} <i class="bi bi-box-arrow-up-right"></i>
+                                </a>
+                            </div>
+                        {% endif %}
+
+                        {% if project.position %}
+                            <small class="text-body-secondary">
+                                {{ project.position }}
+                            </small>
+                        {% endif %}
+
                         <ul class="mb-0">
                             {% for responsibility in project.responsibilities %}
                                 <li>{{ responsibility }}</li>
