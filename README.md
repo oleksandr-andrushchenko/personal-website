@@ -33,6 +33,7 @@ make down               # drop docker container(-s)
 - disable indexing of websites and images (3rd parties)
 - update Linkedin: move responsibilities to projects, sync with personal website
 - add 404.html
+- add pricing
 
 ## Links
 
