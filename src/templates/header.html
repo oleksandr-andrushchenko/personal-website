@@ -1,8 +1,8 @@
 <header>
-    <nav class="navbar navbar-expand-md bg-{{ header.bg }} sticky-top" data-bs-theme="{{ header.bs }}">
+    <nav class="navbar navbar-expand-md bg-{{ header.bg }}" data-bs-theme="{{ header.bs }}">
         <div class="container">
             {% if header.brand %}
-                <a class="navbar-brand fs-3" style="outline:none" href="/">
+                <a class="navbar-brand link-secondary" style="outline:none" href="/">
                     {{ header.brand|default('Personal') }}
                 </a>
             {% endif %}
@@ -11,7 +11,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbar">
-                <ul class="navbar-nav me-auto py-3 mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto">
                     {% set ns = namespace(_nav_blocks=[]) %}
 
                     {% for key, block in __ctx__.items() %}
