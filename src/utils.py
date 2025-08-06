@@ -40,7 +40,9 @@ def format_date_range(start_str, end_str=None):
         end = datetime.strptime(end_str, "%m/%Y")
         end_fmt = end.strftime("%b %Y")
 
-    diff = relativedelta(end, start)
+    # Add 1 extra month to match LinkedIn's rounding behavior
+    diff = relativedelta(end + relativedelta(months=1), start)
+
     years = diff.years
     months = diff.months
 
@@ -51,6 +53,7 @@ def format_date_range(start_str, end_str=None):
         parts.append("1 yr")
     elif years > 1:
         parts.append(f"{years} yrs")
+
     if months == 1:
         parts.append("1 mo")
     elif months > 1:
