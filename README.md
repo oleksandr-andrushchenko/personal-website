@@ -31,10 +31,10 @@ make down               # drop docker container(-s)
 - add images for skills
 - add markings (type=person and other details)
 - disable indexing of websites and images (3rd parties)
-- update Linkedin: move responsibilities to projects, sync with personal website
-- add 404.html
 - add pricing
+- add credentials to licenses and education
 
 ## Links
 
 - favicon generation: https://realfavicongenerator.net/
+- circle image: https://crop-circle.imageonline.co/
