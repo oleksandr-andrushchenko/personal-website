@@ -1,4 +1,7 @@
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     {% if env.GOOGLE_ANALYTICS_ID %}
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ env.GOOGLE_ANALYTICS_ID }}"></script>
@@ -10,7 +13,6 @@
           }
 
           gtag("js", new Date())
-
           gtag("config", "{{ env.GOOGLE_ANALYTICS_ID }}")
         </script>
     {% endif %}
@@ -20,10 +22,20 @@
 
     <title>{{ head.title }}</title>
 
-    {% if head.meta %}
-        {% for key, val in head.meta.items() %}
+    {% if head.meta_name %}
+        {% for key, val in head.meta_name.items() %}
             <meta name="{{ key }}" content="{{ val }}"/>
         {% endfor %}
+    {% endif %}
+
+    {% if head.meta_property %}
+        {% for key, val in head.meta_property.items() %}
+            <meta property="{{ key }}" content="{{ val }}"/>
+        {% endfor %}
+    {% endif %}
+
+    {% if head.schema_org %}
+        <script type="application/ld+json">{{ head.schema_org | tojson | safe }}</script>
     {% endif %}
 
     {% if head.favicon and head.favicon.active %}
@@ -39,10 +51,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans&family=Anton&display=swap">
 
     <style>
