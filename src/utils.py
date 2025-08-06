@@ -52,8 +52,7 @@ def format_date_range(start_str, end_str=None):
         end, end_has_day = parse_date(end_str)
         end_fmt = end.strftime("%b %-d, %Y") if end_has_day else end.strftime("%b %Y")
 
-    # Add 1 extra month for rounding behavior
-    diff = relativedelta(end + relativedelta(months=1), start)
+    diff = relativedelta(end, start)
 
     years = diff.years
     months = diff.months
