@@ -29,24 +29,36 @@ def format_us_date(date_str):
         return date_str
 
 
-def format_date_range(start_str, end_str=None):
-    start = datetime.strptime(start_str, "%m/%Y")
+def parse_date(date_str):
+    """Parse a date string and return (datetime_obj, has_day_flag)."""
+    for fmt in ("%m/%d/%Y", "%m/%Y"):
+        try:
+            dt = datetime.strptime(date_str, fmt)
+            has_day = fmt == "%m/%d/%Y"
+            return dt, has_day
+        except ValueError:
+            continue
+    raise ValueError(f"Date '{date_str}' is not in a supported format (expected mm/YYYY or mm/dd/YYYY)")
 
-    # If end_str is None or empty, use current date
+
+def format_date_range(start_str, end_str=None):
+    start, start_has_day = parse_date(start_str)
+
     if not end_str:
         end = datetime.now()
         end_fmt = "Present"
+        end_has_day = False
     else:
-        end = datetime.strptime(end_str, "%m/%Y")
-        end_fmt = end.strftime("%b %Y")
+        end, end_has_day = parse_date(end_str)
+        end_fmt = end.strftime("%b %-d, %Y") if end_has_day else end.strftime("%b %Y")
 
-    # Add 1 extra month to match LinkedIn's rounding behavior
+    # Add 1 extra month for rounding behavior
     diff = relativedelta(end + relativedelta(months=1), start)
 
     years = diff.years
     months = diff.months
 
-    start_fmt = start.strftime("%b %Y")  # e.g. "Feb 2024"
+    start_fmt = start.strftime("%b %-d, %Y") if start_has_day else start.strftime("%b %Y")
 
     parts = []
     if years == 1:
