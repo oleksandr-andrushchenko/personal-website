@@ -72,9 +72,9 @@
         </div>
 
         <div class="collapse" id="{{ toggle_id }}">
-            <div class="d-flex flex-column gap-1 py-2">
+            <div class="d-flex flex-column gap-2 py-2">
                 {% for project in project_items %}
-                    <div class="card-text">
+                    <div class="card-text d-flex flex-column gap-1">
                         <div class="h5 mb-0">Project #{{ loop.index }}: {{ project.project }}</div>
 
                         {% if project.url %}
@@ -97,17 +97,17 @@
                                 <li>{{ responsibility }}</li>
                             {% endfor %}
                         </ul>
+
+                        {% if project.tags %}
+                            <div class="card-text">
+                                <small class="text-body-secondary">
+                                    <i class="bi bi-tags"></i>
+                                    {{ project.tags | unique | join(' · ') }}
+                                </small>
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
-
-                {% if item.tags %}
-                    <div class="card-text">
-                        <small class="text-body-secondary">
-                            <i class="bi bi-tags"></i>
-                            {{ item.tags | join(' · ') }}
-                        </small>
-                    </div>
-                {% endif %}
             </div>
         </div>
 
