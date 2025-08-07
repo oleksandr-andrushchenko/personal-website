@@ -29,7 +29,6 @@ make down               # drop docker container(-s)
 ## TODO
 
 - add images for skills
-- add markings (type=person and other details)
 - disable indexing of websites and images (3rd parties)
 - add pricing
 - add credentials to licenses and education
