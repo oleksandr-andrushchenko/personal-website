@@ -63,12 +63,24 @@
             {% endif %}
         </div>
 
-        {% if item.description %}
+        {% if item.description or item.credentials %}
             <div class="collapse" id="{{ toggle_id }}">
                 <div class="d-flex flex-column gap-1 py-2">
-                    <div class="card-text">
-                        {{ item.description }}
-                    </div>
+                    {% if item.description %}
+                        <div class="card-text">
+                            {{ item.description }}
+                        </div>
+                    {% endif %}
+
+                    {% if item.credentials %}
+                        <div class="card-text">
+                            <small class="text-body-secondary" data-bs-toggle="tooltip"
+                                   data-bs-title="{{ block.credentials }}">
+                                <i class="bi bi-database-check"></i>
+                                {{ item.credentials }}
+                            </small>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         {% endif %}
