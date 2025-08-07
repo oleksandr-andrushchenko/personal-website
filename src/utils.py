@@ -131,3 +131,9 @@ def minify_html(html: str) -> str:
     html = re.sub(r'(\w+)=([\'"])(.*?)\2', clean_attr_value, html, flags=re.DOTALL)
 
     return html.strip()
+
+
+def unique(value):
+    if isinstance(value, list):
+        return list(dict.fromkeys(value))
+    return value

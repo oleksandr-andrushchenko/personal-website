@@ -4,7 +4,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 from utils import load_merged_data, load_merged_routes, format_us_date, shuffle, format_date_range, minify_html, \
-    reload_env_vars
+    reload_env_vars, unique
 import os
 
 allowed_routes = load_merged_routes()
@@ -16,6 +16,7 @@ env = Environment(loader=FileSystemLoader(str(TEMPLATE_DIR)))
 env.filters['format_us_date'] = format_us_date
 env.filters['shuffle'] = shuffle
 env.filters['date_range'] = format_date_range
+env.filters['unique'] = unique
 
 
 class RequestHandler(BaseHTTPRequestHandler):
