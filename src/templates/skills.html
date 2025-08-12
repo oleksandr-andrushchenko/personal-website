@@ -2,12 +2,12 @@
     <h2 class="text-bg-dark d-inline-block py-1 px-3 mb-4">{{ block.header }}</h2>
 
     <div class="d-flex flex-wrap align-items-center gap-1 h5 fw-normal">
-        {% for tag in block.technology_tags | selectattr('active') | shuffle %}
-            {% set font_size = (tag.years * 0.15) if (tag.years * 0.15) > 0.8 else 0.8 %}
-            {% set opacity = (tag.percent / 100) | round(2) %}
-            <span class="text-bg-{{ tag.color | default('light') }} px-2"
+        {% for item in block["items"] | selectattr('active') | shuffle %}
+            {% set font_size = (item.years * 0.15) if (item.years * 0.15) > 0.8 else 0.8 %}
+            {% set opacity = (item.percent / 100) | round(2) %}
+            <span class="text-bg-{{ item.color | default('light') }} px-2"
                   style="opacity: {{ opacity }}; font-size: {{ font_size }}rem;"
-                  title="{{ tag.years }} years of experience">{{ tag.header }}</span>
+                  title="{{ item.years }} years of experience">{{ item.header }}</span>
         {% endfor %}
     </div>
 </div>
