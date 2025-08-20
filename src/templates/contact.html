@@ -40,13 +40,13 @@
                 {% if block.email %}
                     <div>
                         Email
-                        <div class="fw-bold">{{ block.email }}</div>
+                        <a class="fw-bold d-block" href="mailto:{{ block.email }}">{{ block.email }}</a>
                     </div>
                 {% endif %}
                 {% if block.phone %}
                     <div>
                         Phone
-                        <div class="fw-bold">{{ block.phone }}</div>
+                        <a class="fw-bold d-block" href="tel:{{ block.phone }}">{{ block.phone }}</a>
                     </div>
                 {% endif %}
                 {% if block.address %}
