@@ -4,12 +4,16 @@ ifneq (,$(wildcard .env))
   export
 endif
 
-.PHONY: deploy-cert get-cert-arn deploy-infra get-infra-details destroy-infra deploy-site invalidate up down rebuild login logs generate open
+.PHONY: deploy-cert get-cert-arn deploy-infra get-infra-details destroy-infra deploy-site invalidate up down rebuild login logs generate open help get-lambda-url
 
 DC = docker-compose
 CONTAINER = personal-website-generator
 
-deploy-cert:
+help: ## Show this help
+	@echo "Available commands:"
+	@awk -F '## ' '/^[a-zA-Z_-]+:.*##/ {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
+
+deploy-cert: ## Deploy ACM certificate for the domain
 	@echo "🔐 Deploying ACM certificate for $(DOMAIN_NAME) in us-east-1..."
 	aws cloudformation deploy \
 		--profile "$(AWS_PROFILE_NAME)" \
@@ -32,7 +36,7 @@ deploy-cert:
 			Region="us-east-1"
 	@echo "✅ Certificate deployment triggered. Waiting for DNS validation..."
 
-get-cert-arn:
+get-cert-arn: ## Fetch the ACM Certificate ARN
 	@echo "🔍 Fetching ACM Certificate ARN for $(DOMAIN_NAME) in us-east-1..."
 	@ARN=$$(aws cloudformation describe-stacks \
 		--stack-name "$(STACK_NAME)-cert" \
@@ -53,7 +57,7 @@ get-cert-arn:
 		echo "📝 Updated .env with CLOUDFRONT_CERTIFICATE_ARN"; \
 	fi
 
-deploy-infra:
+deploy-infra: ## Deploy CloudFormation stack for the site
 	@echo "🚀 Deploying CloudFormation stack for $(DOMAIN_NAME)..."
 	@if [ -z "$(CLOUDFRONT_CERTIFICATE_ARN)" ]; then \
 		echo "❌ CLOUDFRONT_CERTIFICATE_ARN is not defined. Run \`make get-cert-arn\` or export it in .env"; \
@@ -80,7 +84,6 @@ deploy-infra:
 			Project="$(TAG_PROJECT)" \
 			Owner="$(TAG_OWNER)" \
 			Environment="$(TAG_ENVIRONMENT)"
-
 	@echo "📤 Stack outputs:"
 	@aws cloudformation describe-stacks \
 		--stack-name "$(STACK_NAME)" \
@@ -89,13 +92,13 @@ deploy-infra:
 		--query "Stacks[0].Outputs" \
 		--output table
 
-get-infra-details:
+get-infra-details: ## Show CloudFormation stack events
 	aws cloudformation describe-stack-events \
 		--stack-name "$(STACK_NAME)" \
 		--profile "$(AWS_PROFILE_NAME)" \
 		--region "$(AWS_REGION)"
 
-destroy-infra:
+destroy-infra: ## Delete CloudFormation stack
 	aws cloudformation delete-stack \
 		--stack-name "$(STACK_NAME)" \
 		--region "$(AWS_REGION)" \
@@ -107,7 +110,7 @@ destroy-infra:
 		--profile "$(AWS_PROFILE_NAME)"
 	@echo "✅ Stack $(STACK_NAME) deleted."
 
-get-lambda-url:
+get-lambda-url: ## Fetch Lambda function URL and save to .env
 	@echo "📡 Fetching Lambda Function URL..."
 	@LAMBDA_URL=$$(aws cloudformation describe-stacks \
 		--stack-name "$(STACK_NAME)" \
@@ -123,13 +126,13 @@ get-lambda-url:
 	fi; \
 	echo "✅ Saved LAMBDA_URL=$$LAMBDA_URL to .env"
 
-deploy-site:
+deploy-site: ## Sync local site files to S3
 	aws s3 sync ./$(WEBSITE_DIR) s3://$(DOMAIN_NAME) \
 		--delete \
 		--profile "$(AWS_PROFILE_NAME)" \
 		--region "$(AWS_REGION)"
 
-invalidate:
+invalidate: ## Invalidate CloudFront cache for the site
 	@echo "🔎 Finding CloudFront distribution for $(DOMAIN_NAME)..."
 	@DISTRIBUTION_ID=$$(aws cloudfront list-distributions \
 		--profile "$(AWS_PROFILE_NAME)" \
@@ -147,25 +150,25 @@ invalidate:
 		echo "⚠️  CloudFront distribution not found for $(DOMAIN_NAME) — skipping invalidation."; \
 	fi
 
-up:
+up: ## Start local Docker containers
 	$(DC) up -d --remove-orphans
 
-down:
+down: ## Stop local Docker containers
 	$(DC) down
 
-rebuild:
+rebuild: ## Rebuild and start Docker containers
 	$(DC) down
 	$(DC) build
 	$(DC) up -d --remove-orphans
 
-login:
+login: ## Open shell in Docker container
 	docker exec -it $(CONTAINER) bash
 
-logs:
+logs: ## Show logs of Docker container
 	docker logs -f $(CONTAINER)
 
-generate:
+generate: ## Run content generator inside Docker container
 	docker exec -it $(CONTAINER) python generate.py
 
-open:
+open: ## Show local site URL
 	@echo "🌐 Visit http://localhost:3000 in your browser manually."
