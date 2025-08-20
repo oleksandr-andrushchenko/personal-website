@@ -13,46 +13,51 @@
         <div class="col-12 col-md-6">
             <form class="row g-3" id="contact-form" novalidate>
                 <div class="col-12">
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
-                    <div class="invalid-feedback">Please enter your name.</div>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="{{ block.name_label }}"
+                           required>
+                    <div class="invalid-feedback">{{ block.name_error_label }}</div>
                 </div>
                 <div class="col-12">
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Your Email" required>
-                    <div class="invalid-feedback">Please enter a valid email address.</div>
+                    <input type="email" class="form-control" id="email" name="email"
+                           placeholder="{{ block.email_label }}" required>
+                    <div class="invalid-feedback">{{ block.email_error_label }}</div>
                 </div>
                 <div class="col-12">
-                    <textarea class="form-control" id="message" name="message" placeholder="Your Message" rows="10"
+                    <textarea class="form-control" id="message" name="message" placeholder="{{ block.message_label }}"
+                              rows="10"
                               required></textarea>
-                    <div class="invalid-feedback">Please enter a message.</div>
+                    <div class="invalid-feedback">{{ block.message_error_label }}</div>
                 </div>
                 <div class="col-12">
                     <div id="form-status" class="alert d-none" role="alert"></div>
                     <button type="submit" class="btn btn-outline-dark">
-                        Send Message <i class="bi bi-chevron-right"></i>
+                        {{ block.send_message_label }} <i class="bi bi-chevron-right"></i>
                     </button>
                 </div>
             </form>
         </div>
 
         <div class="col-12 col-md-6 mt-5 mt-md-0 text-center text-md-start">
-            <h3 class="mb-4">Contact details</h3>
+            <h3 class="mb-4">{{ block.contact_details_label }}</h3>
             <div class="d-flex flex-column gap-3">
-                {% if block.email %}
+                {% if block.email and block.email.active %}
                     <div>
-                        Email
-                        <a class="fw-bold d-block" href="mailto:{{ block.email }}">{{ block.email }}</a>
+                        <i class="bi bi-at"></i> {{ block.email.label }}
+                        <a class="d-block" href="mailto:{{ block.email.id }}">{{ block.email.id }}</a>
                     </div>
                 {% endif %}
-                {% if block.phone %}
+
+                {% if block.phone and block.phone.active %}
                     <div>
-                        Phone
-                        <a class="fw-bold d-block" href="tel:{{ block.phone }}">{{ block.phone }}</a>
+                        <i class="bi bi-phone"></i> {{ block.phone.label }}
+                        <a class="d-block" href="tel:{{ block.phone.id }}">{{ block.phone.id }}</a>
                     </div>
                 {% endif %}
-                {% if block.address %}
+
+                {% if block.address and block.address.active %}
                     <div>
-                        Address
-                        <div class="fw-bold">{{ block.address.replace('\n', '<br>') | safe }}</div>
+                        <i class="bi bi-geo"></i> {{ block.address.label }}
+                        <div>{{ block.address.id.replace('\n', '<br>') | safe }}</div>
                     </div>
                 {% endif %}
             </div>
@@ -90,16 +95,16 @@
 
         if (response.ok) {
           statusDiv.className = "alert alert-success"
-          statusDiv.textContent = result.message || "Message sent!"
+          statusDiv.textContent = result.message || "{{ block.message_sent_label }}"
           form.reset()
           form.classList.remove("was-validated")
         } else {
           statusDiv.className = "alert alert-danger"
-          statusDiv.textContent = result.message || "Something went wrong."
+          statusDiv.textContent = result.message || "{{ block.message_failed_label }}"
         }
       } catch (err) {
         statusDiv.className = "alert alert-danger"
-        statusDiv.textContent = "Network error. Please try again."
+        statusDiv.textContent = "{{ block.message_unknown_label }}"
       }
 
       statusDiv.classList.remove("d-none")
