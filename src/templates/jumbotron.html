@@ -48,7 +48,7 @@
                 <div class="
                     col col-12 text-center {{ "mt-3" if block.avatar_image.active else "" }}
                     {{ "col-sm-12" if block.avatar_image.active else "col-sm-12" }}
-                    {{ "col-md-8 mt-md-0 text-md-start" if block.avatar_image.active else "col-md-6" }} d-md-flex align-items-md-center
+                    {{ "col-md-8 mt-md-0 text-md-start" if block.avatar_image.active else "col-md-12" }}
                     {{ "col-lg-9" if block.avatar_image.active else "text-lg-start" }}
                     {{ "col-xl-10" if block.avatar_image.active else "" }}
                     {{ "col-xxl-10" if block.avatar_image.active else "" }}
@@ -84,14 +84,26 @@
                             </div>
                         {% endif %}
 
-                        {% if block.cv.active %}
-                            <a href="/{{ block.cv.filename }}"
-                               class="btn btn-{{ block.text_color if block.text_color else 'primary' }} btn-sm mt-2 d-print-none"
-                               download>
-                                <i class="bi bi-download"></i>
-                                {{ block.download_cv }}
+                        <div class="
+                            mt-2 d-flex gap-1 align-items-center justify-content-center d-print-none
+                            {{ "justify-content-md-start" if block.avatar_image.active else "" }}
+                            {{ "justify-content-lg-start" if block.avatar_image.active else "justify-content-lg-start" }}
+                        ">
+                            {% if block.cv.active %}
+                                <a href="/{{ block.cv.filename }}"
+                                   class="btn btn-{{ block.text_color if block.text_color else 'primary' }}"
+                                   download>
+                                    <i class="bi bi-download"></i>
+                                    {{ block.download_cv }}
+                                </a>
+                            {% endif %}
+
+                            <a href="#" onclick="window.print();return false;"
+                               class="btn btn-{{ block.text_color if block.text_color else 'primary' }} btn-sm">
+                                <i class="bi bi-printer"></i>
+                                Print me
                             </a>
-                        {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
