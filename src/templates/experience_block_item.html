@@ -65,7 +65,7 @@
 
             {% if item.url %}
                 <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
-                   target="_blank">
+                   target="_blank" rel="noopener noreferrer">
                     {{ block.open_company }} <i class="bi bi-box-arrow-up-right"></i>
                 </a>
             {% endif %}
@@ -81,7 +81,7 @@
                         {% if project.url %}
                             <div class="d-print-none">
                                 <a href="{{ project.url }}" class="btn btn-sm btn-outline-secondary"
-                                   target="_blank">
+                                   target="_blank" rel="noopener noreferrer">
                                     {{ block.open_project }} <i class="bi bi-box-arrow-up-right"></i>
                                 </a>
                             </div>

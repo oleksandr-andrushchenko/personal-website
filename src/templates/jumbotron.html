@@ -75,7 +75,7 @@
                                 {% for social in social_items %}
                                     <a href="{{ social.url }}"
                                        class="fs-2 link-{{ block.text_color if block.text_color else 'primary' }} me-2 d-print-none"
-                                       target="_blank"><i class="bi bi-{{ social.icon }}"></i></a>
+                                       target="_blank" rel="noopener noreferrer"><i class="bi bi-{{ social.icon }}"></i></a>
                                     <span class="d-none d-print-block">
                                         <i class="bi bi-{{ social.icon }}"></i>
                                         {{ social.url }}

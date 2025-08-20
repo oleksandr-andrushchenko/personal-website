@@ -6,7 +6,7 @@
         {% if social_items %}
             <div class="h3 mt-3">
                 {% for social in social_items %}
-                    <a href="{{ social.url }}" class="link-dark me-2" target="_blank">
+                    <a href="{{ social.url }}" class="link-dark me-2" target="_blank" rel="noopener noreferrer">
                         <i class="bi bi-{{ social.icon }}"></i>
                     </a>
                 {% endfor %}
