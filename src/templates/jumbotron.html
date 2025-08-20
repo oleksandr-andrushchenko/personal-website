@@ -10,7 +10,7 @@
 
 <div>
     {% if block.greetings and block.greetings.active %}
-        <div class="text-bg-warning py-2">
+        <div class="text-bg-warning py-2 d-print-none">
             <div class="container">
                 {% if block.greetings.hello %}
                     <div class="mb-0 text-center text-xl-start">
@@ -74,15 +74,19 @@
                             <div>
                                 {% for social in social_items %}
                                     <a href="{{ social.url }}"
-                                       class="fs-2 link-{{ block.text_color if block.text_color else 'primary' }} me-2"
+                                       class="fs-2 link-{{ block.text_color if block.text_color else 'primary' }} me-2 d-print-none"
                                        target="_blank"><i class="bi bi-{{ social.icon }}"></i></a>
+                                    <span class="d-none d-print-block">
+                                        <i class="bi bi-{{ social.icon }}"></i>
+                                        {{ social.url }}
+                                    </span>
                                 {% endfor %}
                             </div>
                         {% endif %}
 
                         {% if block.cv.active %}
                             <a href="/{{ block.cv.filename }}"
-                               class="btn btn-{{ block.text_color if block.text_color else 'primary' }} btn-sm mt-2"
+                               class="btn btn-{{ block.text_color if block.text_color else 'primary' }} btn-sm mt-2 d-print-none"
                                download>
                                 <i class="bi bi-download"></i>
                                 {{ block.download_cv }}

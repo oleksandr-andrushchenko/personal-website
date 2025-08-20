@@ -7,7 +7,7 @@
     </style>
 {% endif %}
 
-<div class="text-bg-light py-4 {{ ("bg-img bg-img-stat bg-img-" ~ block.cover_image.bg_color | default("light")) if block.cover_image.active else '' }}">
+<div class="text-bg-light py-4 d-print-none {{ ("bg-img bg-img-stat bg-img-" ~ block.cover_image.bg_color | default("light")) if block.cover_image.active else '' }}">
     <div class="container">
         <div class="row text-{{ block.text_color if block.text_color else "body" }}">
             {% for item in block["items"] | selectattr('active') %}

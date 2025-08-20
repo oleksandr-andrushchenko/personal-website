@@ -41,27 +41,27 @@
                 {% endif %}
             </h3>
 
-            <div class="card-text">{{ item.organization }}</div>
+            <div class="d-flex flex-column gap-1">
+                <div class="card-text">{{ item.organization }}</div>
+
+                {% if item.url %}
+                    <div class="card-text d-print-none">
+                        <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
+                           target="_blank">
+                            {{ block.show_credential }} <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </div>
+                {% endif %}
+
+                {% if item.start_date %}
+                    <div class="card-text">
+                        <small class="text-body-secondary">
+                            <i class="bi bi-calendar"></i>
+                            {{ item.start_date | date_range(item.end_date) }}
+                        </small>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    </div>
-
-    <div class="d-flex flex-column gap-1">
-        {% if item.url %}
-            <div class="card-text">
-                <a href="{{ item.url }}" class="btn btn-sm btn-outline-dark"
-                   target="_blank">
-                    {{ block.show_credential }} <i class="bi bi-box-arrow-up-right"></i>
-                </a>
-            </div>
-        {% endif %}
-
-        {% if item.start_date %}
-            <div class="card-text">
-                <small class="text-body-secondary">
-                    <i class="bi bi-calendar"></i>
-                    {{ item.start_date | date_range(item.end_date) }}
-                </small>
-            </div>
-        {% endif %}
     </div>
 </div>

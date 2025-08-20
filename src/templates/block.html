@@ -4,7 +4,7 @@
 
 <div class="container" id="{{ block.id }}">
     <h2 class="
-        text-bg-dark d-inline-block py-1 px-3 mb-1
+        d-inline-block py-1 mb-1
         mb-sm-1
         mb-md-2
         mb-xl-3
@@ -41,13 +41,17 @@
 
     {% if items_hidden %}
         {% set toggle_id = 'toggle-hidden-' ~ block.id %}
-        <button class="btn btn-outline-dark btn-sm mt-2" type="button"
+        <button class="btn btn-outline-secondary btn-sm mt-2 d-print-none" type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#{{ toggle_id }}" aria-expanded="false"
                 aria-controls="{{ toggle_id }}">
             <i class="bi bi-arrow-down-up"></i>
             {{ block.toggle_hidden }}
         </button>
+
+        <div class="d-none d-print-block">
+            {{ block.toggle_hidden_print | replace("%url%", __ctx__["base_url"] ~ block.href) }}
+        </div>
 
         <div class="collapse" id="{{ toggle_id }}">
             <div class="

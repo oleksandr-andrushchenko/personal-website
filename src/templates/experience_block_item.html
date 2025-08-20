@@ -54,8 +54,8 @@
     </div>
 
     <div class="d-flex flex-column gap-1">
-        <div class="d-flex gap-1">
-            <button class="btn btn-outline-dark btn-sm" type="button"
+        <div class="d-flex gap-1 d-print-none">
+            <button class="btn btn-outline-secondary btn-sm" type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#{{ toggle_id }}" aria-expanded="false"
                     aria-controls="{{ toggle_id }}">
@@ -64,22 +64,23 @@
             </button>
 
             {% if item.url %}
-                <a href="{{ item.url }}" class="btn btn-sm btn-outline-dark"
+                <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
                    target="_blank">
                     {{ block.open_company }} <i class="bi bi-box-arrow-up-right"></i>
                 </a>
             {% endif %}
         </div>
 
-        <div class="collapse" id="{{ toggle_id }}">
+        <div class="collapse d-print-block" id="{{ toggle_id }}">
             <div class="d-flex flex-column gap-2 py-2">
+                {% set project_items_count = project_items | length %}
                 {% for project in project_items %}
                     <div class="card-text d-flex flex-column gap-1">
-                        <div class="h5 mb-0">Project #{{ loop.index }}: {{ project.project }}</div>
+                        <div class="h5 mb-0">{{ block.project }}{{ (" #" ~ loop.index) if project_items_count > 1 else "" }}: {{ project.project }}</div>
 
                         {% if project.url %}
-                            <div>
-                                <a href="{{ project.url }}" class="btn btn-sm btn-outline-dark"
+                            <div class="d-print-none">
+                                <a href="{{ project.url }}" class="btn btn-sm btn-outline-secondary"
                                    target="_blank">
                                     {{ block.open_project }} <i class="bi bi-box-arrow-up-right"></i>
                                 </a>

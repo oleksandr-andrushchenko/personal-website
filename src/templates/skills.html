@@ -1,5 +1,13 @@
 <div class="container" id="{{ block.id }}">
-    <h2 class="text-bg-dark d-inline-block py-1 px-3 mb-4">{{ block.header }}</h2>
+    <h2 class="
+        d-inline-block py-1 mb-1
+        mb-sm-1
+        mb-md-2
+        mb-xl-3
+        mb-xxl-3
+    ">
+        {{ block.header }}
+    </h2>
 
     <div class="d-flex flex-wrap align-items-center gap-1 h5 fw-normal">
         {% for item in block["items"] | selectattr('active') | shuffle %}
