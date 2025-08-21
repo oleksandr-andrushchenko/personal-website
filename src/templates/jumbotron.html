@@ -64,12 +64,31 @@
                             </h2>
                         {% endif %}
 
-                        {% if block.location %}
-                            <i class="bi bi-geo"></i>
-                            {{ block.location }}
-                        {% endif %}
+                        {% set contacts = __ctx__["contacts"] %}
 
-                        {% set social_items = block.socials | selectattr('active') | list %}
+                        <div>
+                            {% if contacts.phone and contacts.phone.active %}
+                                <a class="link-{{ block.text_color if block.text_color else 'primary' }} d-inline-block me-2"
+                                   href="tel:{{ contacts.phone.id }}">
+                                    {{ contacts.phone.id }}
+                                </a>
+                            {% endif %}
+
+                            {% if contacts.email and contacts.email.active %}
+                                <a class="link-{{ block.text_color if block.text_color else 'primary' }} d-inline-block me-2"
+                                   href="mailto:{{ contacts.email.id }}">
+                                    {{ contacts.email.id }}
+                                </a>
+                            {% endif %}
+
+                            {% if contacts.address and contacts.address.active %}
+                                <span class="d-inline-block me-2">
+                                    <i class="bi bi-geo"></i> {{ contacts.address.id }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        {% set social_items = contacts.socials | selectattr('active') | list %}
                         {% if social_items %}
                             <div>
                                 {% for social in social_items %}
@@ -94,14 +113,14 @@
                                    class="btn btn-{{ block.text_color if block.text_color else 'primary' }}"
                                    download>
                                     <i class="bi bi-download"></i>
-                                    {{ block.download_cv }}
+                                    {{ block.cv.download_label }}
                                 </a>
                             {% endif %}
 
                             <a href="#" onclick="window.print();return false;"
-                               class="btn btn-{{ block.text_color if block.text_color else 'primary' }} btn-sm">
+                               class="btn btn-outline-{{ block.text_color if block.text_color else 'primary' }} btn-sm">
                                 <i class="bi bi-printer"></i>
-                                {{ block.print_me }}
+                                {{ block.print_me_label }}
                             </a>
                         </div>
                     </div>

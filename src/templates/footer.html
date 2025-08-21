@@ -2,7 +2,7 @@
     <div class="container py-3">
         &copy; {{ footer.current_year }} {{ footer.person }}
 
-        {% set social_items = __ctx__["jumbotron"].socials | selectattr('active') | list %}
+        {% set social_items = __ctx__["contacts"].socials | selectattr('active') | list %}
         {% if social_items %}
             <div class="h3 mt-3">
                 {% for social in social_items %}

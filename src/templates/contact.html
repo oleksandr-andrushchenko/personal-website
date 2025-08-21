@@ -1,7 +1,7 @@
 <div class="container d-print-none" id="{{ block.id }}">
     <h2 class="
-        mb-1 text-center
-        mb-sm-1
+        mb-2 text-center
+        mb-sm-2
         mb-md-2
         mb-lg-2 text-lg-start
         mb-xl-3
@@ -40,24 +40,26 @@
         <div class="col-12 col-md-6 mt-5 mt-md-0 text-center text-md-start">
             <h3 class="mb-4">{{ block.contact_details_label }}</h3>
             <div class="d-flex flex-column gap-3">
-                {% if block.email and block.email.active %}
+                {% set contacts = __ctx__["contacts"] %}
+
+                {% if contacts.phone and contacts.phone.active %}
                     <div>
-                        <i class="bi bi-at"></i> {{ block.email.label }}
-                        <a class="d-block" href="mailto:{{ block.email.id }}">{{ block.email.id }}</a>
+                        <i class="bi bi-telephone-outbound"></i> {{ contacts.phone.label }}
+                        <a class="d-block" href="tel:{{ contacts.phone.id }}">{{ contacts.phone.id }}</a>
                     </div>
                 {% endif %}
 
-                {% if block.phone and block.phone.active %}
+                {% if contacts.email and contacts.email.active %}
                     <div>
-                        <i class="bi bi-phone"></i> {{ block.phone.label }}
-                        <a class="d-block" href="tel:{{ block.phone.id }}">{{ block.phone.id }}</a>
+                        <i class="bi bi-envelope-at"></i> {{ contacts.email.label }}
+                        <a class="d-block" href="mailto:{{ contacts.email.id }}">{{ contacts.email.id }}</a>
                     </div>
                 {% endif %}
 
-                {% if block.address and block.address.active %}
+                {% if contacts.address and contacts.address.active %}
                     <div>
-                        <i class="bi bi-geo"></i> {{ block.address.label }}
-                        <div>{{ block.address.id.replace('\n', '<br>') | safe }}</div>
+                        <i class="bi bi-geo"></i> {{ contacts.address.label }}
+                        <div>{{ contacts.address.id }}</div>
                     </div>
                 {% endif %}
             </div>
