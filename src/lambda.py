@@ -1,3 +1,4 @@
+# !!! sync with cf.yml !!!
 import json
 import boto3
 import os

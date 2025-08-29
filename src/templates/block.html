@@ -51,7 +51,7 @@
         </button>
 
         <div class="d-none d-print-block">
-            {{ block.toggle_hidden_print | replace("%url%", __ctx__["base_url"] ~ block.href) }}
+            {{ block.toggle_hidden_print | replace("%url%", base_url ~ block.href) }}
         </div>
 
         <div class="collapse" id="{{ toggle_id }}">

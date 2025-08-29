@@ -17,7 +17,7 @@
                         <small>
                             <i class="bi bi-person-arms-up"></i>
                             {{ block.greetings.hello }}
-                            <a href="{{ __ctx__["contact"].href }}" class="btn btn-dark btn-sm ms-2">
+                            <a href="{{ contact.href }}" class="btn btn-dark btn-sm ms-2">
                                 {{ block.greetings.contact }}
                                 <i class="bi bi-chevron-right"></i>
                             </a>
@@ -63,8 +63,6 @@
                                 {{ block.occupation }}
                             </h2>
                         {% endif %}
-
-                        {% set contacts = __ctx__["contacts"] %}
 
                         <div>
                             {% if contacts.phone and contacts.phone.active %}

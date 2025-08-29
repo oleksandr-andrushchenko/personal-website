@@ -3,7 +3,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    {% if env.GOOGLE_ANALYTICS_ID %}
+    {% if env and env.GOOGLE_ANALYTICS_ID %}
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ env.GOOGLE_ANALYTICS_ID }}"></script>
         <script>
@@ -21,25 +21,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{{ head.title }}</title>
+    {% if head and head.title %}
+        <title>{{ head.title }}</title>
+    {% endif %}
 
-    {% if head.meta_name %}
+    {% if head and head.meta_name %}
         {% for key, val in head.meta_name.items() %}
             <meta name="{{ key }}" content="{{ val }}"/>
         {% endfor %}
     {% endif %}
 
-    {% if head.meta_property %}
+    {% if head and head.meta_property %}
         {% for key, val in head.meta_property.items() %}
             <meta property="{{ key }}" content="{{ val }}"/>
         {% endfor %}
     {% endif %}
 
-    {% if head.schema_org %}
+    {% if head and head.schema_org %}
         <script type="application/ld+json">{{ head.schema_org | tojson | safe }}</script>
     {% endif %}
 
-    {% if head.favicon and head.favicon.active %}
+    {% if head and head.favicon and head.favicon.active %}
         {% if head.favicon.generator == "realfavicongenerator" %}
             <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96"/>
             <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
@@ -49,7 +51,7 @@
         {% endif %}
     {% endif %}
 
-    {% if head.canonical_url %}
+    {% if head and head.canonical_url %}
         <link rel="canonical" href="{{ head.canonical_url }}">
     {% endif %}
 

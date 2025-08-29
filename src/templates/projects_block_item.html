@@ -1,7 +1,7 @@
 {% set toggle_id = 'toggle-details-' ~ salt ~ '-' ~ index %}
 
 {% if item.experience_id %}
-    {% set experience_items = (__ctx__["experience"]["items"] | selectattr("id", "equalto", item.experience_id) | list) %}
+    {% set experience_items = (experience["items"] | selectattr("id", "equalto", item.experience_id) | list) %}
     {% set experience_item = experience_items[0] if experience_items else {} %}
 {% else %}
     {% set experience_item = {} %}

@@ -1,7 +1,7 @@
 {% set toggle_id = 'toggle-details-' ~ salt ~ '-' ~ index %}
 
 {% if item.id %}
-    {% set project_items = (__ctx__["projects"]["items"] | selectattr("experience_id", "equalto", item.id) | list) %}
+    {% set project_items = (projects["items"] | selectattr("experience_id", "equalto", item.id) | list) %}
 {% else %}
     {% set project_items = [] %}
 {% endif %}

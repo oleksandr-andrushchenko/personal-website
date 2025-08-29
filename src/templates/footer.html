@@ -1,8 +1,8 @@
 <footer class="mt-auto bg-light text-center text-md-start d-print-none">
     <div class="container py-3">
-        &copy; {{ footer.current_year }} {{ footer.person }}
+        &copy; {{ footer.current_year if footer and footer.current_year else '' }} {{ footer.person if footer and footer.person else '' }}
 
-        {% set social_items = __ctx__["contacts"].socials | selectattr('active') | list %}
+        {% set social_items = (contacts.socials if contacts and contacts.socials else []) | selectattr('active') | list %}
         {% if social_items %}
             <div class="h3 mt-3">
                 {% for social in social_items %}

@@ -40,8 +40,6 @@
         <div class="col-12 col-md-6 mt-5 mt-md-0 text-center text-md-start">
             <h3 class="mb-4">{{ block.contact_details_label }}</h3>
             <div class="d-flex flex-column gap-3">
-                {% set contacts = __ctx__["contacts"] %}
-
                 {% if contacts.phone and contacts.phone.active %}
                     <div>
                         <i class="bi bi-telephone-outbound"></i> {{ contacts.phone.label }}

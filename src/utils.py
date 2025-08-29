@@ -75,35 +75,25 @@ def format_date_range(start_str, end_str=None):
 
 
 def load_merged_routes():
-    default_path = Path(__file__).parent / "routes.json"
-    custom_path = Path(__file__).parent.parent / "routes.json"
+    routes = {
+        "/": "index.html"
+    }
 
-    default_routes = {}
-    custom_routes = {}
-
-    if default_path.exists():
-        default_routes = json.loads(default_path.read_text(encoding="utf-8"))
+    custom_path = Path(__file__).parent / "routes.json"
     if custom_path.exists():
-        custom_routes = json.loads(custom_path.read_text(encoding="utf-8"))
+        routes.update(json.loads(custom_path.read_text(encoding="utf-8")))
 
-    # Combine and deduplicate
-    return {**default_routes, **custom_routes}
+    return routes
 
 
 def load_merged_data():
-    default_path = Path(__file__).parent / "data.json"
-    custom_path = Path(__file__).parent.parent / "data.json"
+    data = {}
 
-    default_data = {}
-    custom_data = {}
-
-    if default_path.exists():
-        default_data = json.loads(default_path.read_text(encoding="utf-8"))
+    custom_path = Path(__file__).parent / "data.json"
     if custom_path.exists():
-        custom_data = json.loads(custom_path.read_text(encoding="utf-8"))
+        data.update(json.loads(custom_path.read_text(encoding="utf-8")))
 
-    # Shallow merge: custom overrides default
-    return {**default_data, **custom_data}
+    return data
 
 
 def minify_html(html: str) -> str:

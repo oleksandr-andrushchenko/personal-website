@@ -1,7 +1,8 @@
 <header class="d-print-none">
-    <nav class="navbar navbar-expand-md bg-{{ header.bg }}" data-bs-theme="{{ header.bs }}">
+    <nav class="navbar navbar-expand-md bg-{{ header.bg if header and header.bg else '' }}"
+         data-bs-theme="{{ header.bs if header and header.bs else '' }}">
         <div class="container">
-            {% if header.brand %}
+            {% if header and header.brand %}
                 <a class="navbar-brand link-secondary" style="outline:none" href="/">
                     {{ header.brand|default('Personal') }}
                 </a>
