@@ -289,7 +289,7 @@ generate-code-files: ## Build Lambda zips for all listed LAMBDAS
 
 	@for lambda_name in $(LAMBDAS); do \
 		echo "🛠 Building $$lambda_name..."; \
-		LAMBDA_DIR="src/$$lambda_name"; \
+		LAMBDA_DIR="$$lambda_name-src"; \
 		TMP_DIR="$(CODE_BUILD_DIR)/tmp_$$lambda_name"; \
 		mkdir -p "$$TMP_DIR"; \
 		cp -r "$$LAMBDA_DIR/." "$$TMP_DIR/"; \
