@@ -9,7 +9,7 @@ BASE_URL = "http://localhost:8000"
 allowed_routes = load_merged_routes()
 
 ASSET_DIR = Path(__file__).parent / "assets"
-OUTPUT_DIR = Path(__file__).parent.parent / "output"
+OUTPUT_DIR = Path(__file__).parent.parent / ".site-build"
 
 # Clean output directory
 if OUTPUT_DIR.exists():

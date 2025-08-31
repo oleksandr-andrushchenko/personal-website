@@ -1,4 +1,3 @@
-import os
 import signal
 import subprocess
 from pathlib import Path
@@ -6,7 +5,8 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 WATCH_PATHS = [
-    Path(__file__).parent,  # everything in src/
+    Path(__file__).parent,  # everything in ./src
+    Path(__file__).parent.parent / ".env",  # everything in ../.env
 ]
 
 

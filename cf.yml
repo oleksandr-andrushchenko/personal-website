@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Static Website Hosting with Contact Form Handling via Lambda, SES, SNS
+Description: Personal Website Hosting with Contact Form Handling via Lambda, SES, SNS
 
 Parameters:
   DomainName:
@@ -34,24 +34,12 @@ Resources:
   SiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref DomainName
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: 404.html
-      LoggingConfiguration:
-        DestinationBucketName: !Ref LoggingBucket
-        LogFilePrefix: "s3/"
+      BucketName: !Sub "${AWS::StackName}-site"
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
-      VersioningConfiguration:
-        Status: Enabled
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
       Tags:
         - Key: Environment
           Value: !Ref TagEnvironment
@@ -74,7 +62,7 @@ Resources:
             Principal:
               AWS: !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontOAI}"
             Action: s3:GetObject
-            Resource: !Sub "arn:aws:s3:::${DomainName}/*"
+            Resource: !Sub "arn:aws:s3:::${SiteBucket}/*"
 
   CloudFrontOAI:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
@@ -94,8 +82,8 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
           AllowedMethods: [ GET, HEAD ]
           CachedMethods: [ GET, HEAD ]
-          MinTTL: 0
-          DefaultTTL: 86400
+          MinTTL: 31536000        # 1 year
+          DefaultTTL: 31536000
           MaxTTL: 31536000
           ForwardedValues:
             QueryString: false
@@ -103,16 +91,12 @@ Resources:
               - Origin
         Origins:
           - Id: s3Origin
-            DomainName: !Sub "${DomainName}.s3.amazonaws.com"
+            DomainName: !GetAtt SiteBucket.RegionalDomainName
             S3OriginConfig:
               OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOAI}"
         ViewerCertificate:
           AcmCertificateArn: !Ref CertificateArn
           SslSupportMethod: sni-only
-        Logging:
-          Bucket: !GetAtt LoggingBucket.DomainName
-          IncludeCookies: false
-          Prefix: "cloudfront/"
         CustomErrorResponses:
           - ErrorCode: 403
             ResponsePagePath: "/404.html"
@@ -145,6 +129,7 @@ Resources:
   ContactFormTopic:
     Type: AWS::SNS::Topic
     Properties:
+      TopicName: !Sub "${AWS::StackName}-contact-form-topic"
       Subscription:
         - Protocol: email
           Endpoint: !Ref NotificationEmail
@@ -163,7 +148,8 @@ Resources:
   ContactFormFunctionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub "${AWS::StackName}-ContactFormFunctionRole"
+      RoleName: !Sub "${AWS::StackName}-contact-form-function-role"
+      Description: Role for Lambda function to send emails via SES
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -199,8 +185,9 @@ Resources:
   ContactFormFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: ContactFormHandler
-      Handler: index.handler
+      FunctionName: !Sub "${AWS::StackName}-contact-form-function"
+      Description: Lambda function to send emails via SES
+      Handler: app.handler
       Role: !GetAtt ContactFormFunctionRole.Arn
       Runtime: python3.12
       Timeout: 10
@@ -218,60 +205,8 @@ Resources:
         - Key: Region
           Value: !Ref TagRegion
       Code:
-        ZipFile: !Sub |
-          import json
-          import boto3
-          import os
-
-          sns = boto3.client("sns")
-          origin = os.environ["ALLOWED_ORIGIN"]
-          topic_arn = os.environ["CONTACT_TOPIC_ARN"]
-
-          def handler(event, context):
-              try:
-                  request_origin = event.get("headers", {}).get("origin", "")
-                  if request_origin != origin:
-                      return {
-                          "statusCode": 403,
-                          "body": json.dumps({"message": "Forbidden"})
-                      }
-
-                  method = event.get("requestContext", {}).get("http", {}).get("method")
-                  if method == "OPTIONS":
-                      return {
-                          "statusCode": 204,
-                          "body": ""
-                      }
-
-                  body = json.loads(event["body"])
-                  name = body.get("name")
-                  email = body.get("email")
-                  message = body.get("message")
-
-                  if not name or not email or not message:
-                      return {
-                          "statusCode": 400,
-                          "body": json.dumps({"message": "Missing form fields"})
-                      }
-
-                  text = f"New contact form submission:\nName: {name}\nEmail: {email}\nMessage: {message}"
-
-                  sns.publish(
-                      TopicArn=topic_arn,
-                      Message=text,
-                      Subject="New Contact Form Submission"
-                  )
-
-                  return {
-                      "statusCode": 200,
-                      "body": json.dumps({"message": "Message sent"})
-                  }
-              except Exception as e:
-                  return {
-                      "statusCode": 500,
-                      "body": json.dumps({"message": str(e)})
-                  }
-
+        S3Bucket: !Sub "${AWS::StackName}-code"
+        S3Key: contact-form-function.zip
 
   ContactFormFunctionUrl:
     Type: AWS::Lambda::Url
@@ -293,34 +228,6 @@ Resources:
       Principal: "*"
       FunctionUrlAuthType: NONE
 
-  LoggingBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub "${DomainName}-logs"
-      OwnershipControls: # 👈 Required
-        Rules:
-          - ObjectOwnership: ObjectWriter
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: false     # 👈 Allow ACLs to be honored
-        RestrictPublicBuckets: true
-      VersioningConfiguration:
-        Status: Enabled
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-      Tags:
-        - Key: Environment
-          Value: !Ref TagEnvironment
-        - Key: Project
-          Value: !Ref TagProject
-        - Key: Owner
-          Value: !Ref TagOwner
-        - Key: Region
-          Value: !Ref TagRegion
-
   ContactFormFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -339,6 +246,7 @@ Resources:
 Outputs:
   WebsiteURL:
     Value: !Sub "https://${DomainName}"
+    Description: Public URL (served via CloudFront)
   CloudFrontURL:
     Value: !GetAtt CloudFrontDistribution.DomainName
     Description: Direct CloudFront URL
@@ -349,9 +257,6 @@ Outputs:
     Value: !Ref ContactFormFunction
   NotificationTopicArn:
     Value: !Ref ContactFormTopic
-  LoggingBucketName:
-    Value: !Ref LoggingBucket
-    Description: S3 bucket where logs for S3 + CloudFront are stored
   ContactFormFunctionRoleName:
     Value: !Ref ContactFormFunctionRole
     Description: IAM Role name for the Lambda contact form handler

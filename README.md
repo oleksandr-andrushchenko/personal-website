@@ -1,29 +1,32 @@
 # Personal website
 
-## Workflow example
-
-You should have AWS account and "aws" client installed and configured.
-So in the end you should have these files: ~/.aws/credentials and ~/.aws/config
+## Available commands
 
 ```
-make up                 # raise up docker container(-s)
-make logs               # display docker container logs
-make login              # bash into docker container
-make open               # open http://localhost:8000
-cp .env.example .env    # create default .env
-vim .env                # update .env (or nano .env)
-vim data.json           # update data.json (or nano data.json)
-make generate           # generates website folder ready to test locally and then upload to S3, default= ./output
-make deploy-cert        # deploy cert for HTTPs (AWS)
-make get-cert-arn       # display cert and update .env
-make deploy-infra       # deploy infra (AWS)
-make get-infra-details  # display deployed infra, for debug purposes, usually if smth went wrong
-make destroy-infra      # (if deploy has been failed use this one) desroy failed infra (AWS), then after usually - update cf.yml and redeploy infra
-make get-lambda-url     # display contact form lambda url and update .env
-make deploy-site        # deploy website (upload website folder to S3)
-make invalidate         # clear cache (AWS, cloud front distribution)
-make down               # drop docker container(-s)
-
+  clean                Remove build artifacts
+  delete-cert-infra    Delete cert CF stack
+  delete-code-infra    Delete code CF stack
+  delete-infra         Delete CF stack
+  deploy-cert-infra    Deploy ACM certificate for the domain
+  deploy-code-files    Zip and upload Lambda code to S3
+  deploy-code-infra    Deploy S3 bucket for Lambda / CloudFront code
+  deploy-infra         Deploy CF stack for the site
+  deploy-site-files    Sync local site files to S3
+  down                 Stop local Docker containers
+  generate-code-files  Build Lambda zips for all listed LAMBDAS
+  generate-site-files  Run content generator inside Docker container
+  get-cert-arn         Fetch the ACM Certificate ARN and save to .env
+  get-cert-infra       Show cert CF stack events
+  get-code-infra       Show code CF stack events
+  get-contact-form-function-url Fetch Lambda function URL and save to .env
+  get-infra            Show CF stack events
+  help                 Show this help
+  invalidate           Invalidate CloudFront cache for the site
+  login                Open shell in Docker container
+  logs                 Show logs of Docker container
+  open                 Show local site URL
+  rebuild              Rebuild and start Docker containers
+  up                   Start local Docker containers
 ```
 
 ## TODO

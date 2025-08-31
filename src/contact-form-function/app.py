@@ -1,11 +1,10 @@
-# !!! sync with cf.yml !!!
 import json
 import boto3
 import os
 
 sns = boto3.client("sns")
-origin = os.environ["ALLOWED_ORIGIN"]
-topic_arn = os.environ["CONTACT_TOPIC_ARN"]
+origin = os.getenv("ALLOWED_ORIGIN")
+topic_arn = os.getenv("CONTACT_TOPIC_ARN")
 
 
 def handler(event, context):
@@ -47,7 +46,6 @@ def handler(event, context):
             "statusCode": 200,
             "body": json.dumps({"message": "Message sent"})
         }
-
     except Exception as e:
         return {
             "statusCode": 500,

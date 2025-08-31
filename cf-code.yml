@@ -1,13 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: ACM Certificate for CloudFront in us-east-1
+Description: S3 Bucket for Lambda / CloudFront Code Storage
 
 Parameters:
-  DomainName:
-    Type: String
-    Description: The domain name to create a certificate for (e.g., www.example.com)
-  HostedZoneId:
-    Type: String
-    Description: The Route53 Hosted Zone ID for the domain
   TagProject:
     Type: String
     Description: Logical project identifier (e.g. PersonalWebsite)
@@ -23,14 +17,15 @@ Parameters:
     Default: us-east-1
 
 Resources:
-  Certificate:
-    Type: AWS::CertificateManager::Certificate
+  CodeBucket:
+    Type: AWS::S3::Bucket
     Properties:
-      DomainName: !Ref DomainName
-      ValidationMethod: DNS
-      DomainValidationOptions:
-        - DomainName: !Ref DomainName
-          HostedZoneId: !Ref HostedZoneId
+      BucketName: !Ref AWS::StackName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       Tags:
         - Key: Environment
           Value: !Ref TagEnvironment
@@ -42,6 +37,6 @@ Resources:
           Value: !Ref TagRegion
 
 Outputs:
-  CertificateArn:
-    Description: ARN of the ACM certificate to use in CloudFront
-    Value: !Ref Certificate
+  CodeBucketName:
+    Description: Name of the S3 bucket for storing Lambda / CloudFront code
+    Value: !Ref CodeBucket
