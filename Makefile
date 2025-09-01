@@ -304,4 +304,4 @@ generate-code-files: ## Build Lambda zips for all listed LAMBDAS
 
 .PHONY: open
 open: ## Show local site URL
-	@echo "🌐 Visit http://localhost:3000 in your browser manually."
+	@echo "🌐 Visit http://localhost:$(APP_PORT) in your browser manually."
