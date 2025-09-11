@@ -2,14 +2,12 @@
 
 {% block content %}
     <div class="container py-5 text-center text-md-start">
-        <h1>404</h1>
-
-        <h2><i class="bi bi-question-diamond"></i> Page Not Found</h2>
+        <h1>404 - {{ not_found.title | default("Page Not Found") }}</h1>
 
         <p>{{ not_found.sorry }}</p>
 
         <a href="/" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-return-left"></i>
+            <i class="bi bi-arrow-left-short"></i>
             {{ not_found.go_home }}
         </a>
     </div>
