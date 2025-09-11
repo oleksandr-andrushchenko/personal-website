@@ -11,7 +11,7 @@ allowed_routes = load_merged_routes()
 
 # Jinja2 environment
 TEMPLATE_DIR = Path(__file__).parent / "templates"
-ASSET_DIR = Path(__file__).parent / "assets"
+ASSET_DIR = Path(__file__).parent / "static"
 env = Environment(loader=FileSystemLoader(str(TEMPLATE_DIR)))
 env.filters['format_us_date'] = format_us_date
 env.filters['shuffle'] = shuffle
@@ -24,7 +24,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         parsed_path = urllib.parse.urlparse(self.path)
         route = parsed_path.path
 
-        # Serve static assets if match
+        # Serve static static if match
         if self.serve_asset(route):
             return
 
@@ -65,7 +65,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         rel_path = Path(path.lstrip("/"))
         asset_path = (ASSET_DIR / rel_path).resolve()
 
-        # Prevent directory traversal: ensure it's within the assets folder
+        # Prevent directory traversal: ensure it's within the static folder
         assets_root = ASSET_DIR.resolve()
         if not str(asset_path).startswith(str(assets_root)):
             return False
@@ -85,7 +85,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     print("🌐 Webserver running at http://localhost:8000")
     print("🧩 Serving only these routes:", ", ".join(sorted(allowed_routes)))
-    print("🖼  Templates: /templates | Assets: /assets")
+    print("🖼  Templates: /templates | Assets: /static")
 
     server = HTTPServer(("0.0.0.0", 8000), RequestHandler)
     try:

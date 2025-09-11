@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Personal Website Hosting with Contact Form Handling via Lambda, SES, SNS
+Description: Personal Website infrastructure with S3, CloudFront, Lambda, SES, SNS
 
 Parameters:
   DomainName:
     Type: String
-    Description: e.g. www.example.com
+    Description: e.g. personal-website.com
   HostedZoneId:
     Type: String
     Description: Route 53 Hosted Zone ID for your domain
@@ -19,13 +19,13 @@ Parameters:
     Description: Phone number for SMS (e.g. +15551234567)
   TagProject:
     Type: String
-    Description: Logical project identifier (e.g. PersonalWebsite)
+    Description: Logical project identifier (e.g. personal-website)
   TagOwner:
     Type: String
-    Description: Resource owner (e.g. Oleksandr)
+    Description: Resource owner (e.g. olek)
   TagEnvironment:
     Type: String
-    Description: Deployment environment (e.g. Production)
+    Description: Deployment environment (e.g. prod)
   TagRegion:
     Type: String
     Description: AWS region (e.g. us-west-2)
@@ -60,7 +60,7 @@ Resources:
           - Sid: AllowCloudFrontOAI
             Effect: Allow
             Principal:
-              AWS: !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontOAI}"
+              CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
             Action: s3:GetObject
             Resource: !Sub "arn:aws:s3:::${SiteBucket}/*"
 
@@ -82,9 +82,9 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
           AllowedMethods: [ GET, HEAD ]
           CachedMethods: [ GET, HEAD ]
-          MinTTL: 31536000        # 1 year
-          DefaultTTL: 31536000
-          MaxTTL: 31536000
+          MinTTL: 3600        # 1 hour
+          DefaultTTL: 86400   # 1 day
+          MaxTTL: 31536000    # 1 year
           ForwardedValues:
             QueryString: false
             Headers:
@@ -187,14 +187,16 @@ Resources:
     Properties:
       FunctionName: !Sub "${AWS::StackName}-contact-form-function"
       Description: Lambda function to send emails via SES
-      Handler: app.handler
       Role: !GetAtt ContactFormFunctionRole.Arn
+      Handler: app.handler
       Runtime: python3.12
-      Timeout: 10
       Environment:
         Variables:
           CONTACT_TOPIC_ARN: !Ref ContactFormTopic
           ALLOWED_ORIGIN: !Sub "https://${DomainName}"
+      Code:
+        S3Bucket: !Sub "${AWS::StackName}-code"
+        S3Key: contact-form-function.zip
       Tags:
         - Key: Environment
           Value: !Ref TagEnvironment
@@ -204,9 +206,6 @@ Resources:
           Value: !Ref TagOwner
         - Key: Region
           Value: !Ref TagRegion
-      Code:
-        S3Bucket: !Sub "${AWS::StackName}-code"
-        S3Key: contact-form-function.zip
 
   ContactFormFunctionUrl:
     Type: AWS::Lambda::Url
@@ -253,14 +252,10 @@ Outputs:
   CloudFrontDistributionId:
     Value: !GetAtt CloudFrontDistribution.Id
     Description: The CloudFront distribution ID
-  FormLambdaName:
-    Value: !Ref ContactFormFunction
-  NotificationTopicArn:
+  ContactFormTopicArn:
     Value: !Ref ContactFormTopic
-  ContactFormFunctionRoleName:
-    Value: !Ref ContactFormFunctionRole
     Description: IAM Role name for the Lambda contact form handler
-  LambdaLogGroupName:
+  ContactFormFunctionLogGroupName:
     Value: !Ref ContactFormFunctionLogGroup
     Description: CloudWatch log group for the contact form Lambda
   ContactFormEndpoint:

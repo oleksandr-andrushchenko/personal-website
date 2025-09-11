@@ -8,7 +8,7 @@ from utils import load_merged_routes
 BASE_URL = "http://localhost:8000"
 allowed_routes = load_merged_routes()
 
-ASSET_DIR = Path(__file__).parent / "assets"
+ASSET_DIR = Path(__file__).parent / "static"
 OUTPUT_DIR = Path(__file__).parent.parent / ".site-build"
 
 # Clean output directory
@@ -21,9 +21,9 @@ if OUTPUT_DIR.exists():
 else:
     OUTPUT_DIR.mkdir(parents=True)
 
-# Step 1: Copy assets
+# Step 1: Copy static
 shutil.copytree(ASSET_DIR, OUTPUT_DIR, dirs_exist_ok=True)
-print("✅ Copied assets")
+print("✅ Copied static")
 
 # Download each route from the web server
 for route, template_path in allowed_routes.items():
