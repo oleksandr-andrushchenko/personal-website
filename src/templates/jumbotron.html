@@ -91,12 +91,11 @@
                             <div>
                                 {% for social in social_items %}
                                     <a href="{{ social.url }}"
-                                       class="fs-2 link-{{ block.text_color if block.text_color else 'primary' }} me-2 d-print-none"
-                                       target="_blank" rel="noopener noreferrer"><i class="bi bi-{{ social.icon }}"></i></a>
-                                    <span class="d-none d-print-block">
-                                        <i class="bi bi-{{ social.icon }}"></i>
-                                        {{ social.url }}
-                                    </span>
+                                       class="link-{{ block.text_color if block.text_color else 'primary' }} me-2 d-print-none"
+                                       target="_blank" rel="noopener noreferrer"
+                                    >{% if social.icon %}<i class="bi bi-{{ social.icon }} fs-2"></i>{% else %}{{ social.label }}{% endif %}</a>
+                                    <span class="d-none d-print-block"
+                                    >{% if social.icon %}<i class="bi bi-{{ social.icon }}"></i>{% else %}{{ social.label }}{% endif %} {{ social.url }}</span>
                                 {% endfor %}
                             </div>
                         {% endif %}
