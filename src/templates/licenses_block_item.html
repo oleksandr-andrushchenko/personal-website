@@ -16,9 +16,9 @@
             <div class="
                 col col-3
                 col-sm-3
-                col-md-3
-                col-xl-3
-                col-xxl-3
+                col-md-4
+                col-xl-4
+                col-xxl-4
             ">
                 <img src="/{{ item.image_filename }}" class="rounded"
                      style="max-height: {{ block.image.height }}px; max-width: {{ block.image.width }}px;width: 100%;
@@ -30,9 +30,9 @@
         <div class="
             col {{ "col-9" if item.image_filename else "col-12" }}
             {{ "col-sm-9" if item.image_filename else "col-sm-12" }}
-            {{ "col-md-9" if item.image_filename else "col-md-12" }}
-            {{ "col-xl-9" if item.image_filename else "col-xl-12" }}
-            {{ "col-xxl-9" if item.image_filename else "col-xxl-12" }}
+            {{ "col-md-8" if item.image_filename else "col-md-12" }}
+            {{ "col-xl-8" if item.image_filename else "col-xl-12" }}
+            {{ "col-xxl-8" if item.image_filename else "col-xxl-12" }}
         ">
             <h3 class="h5 card-title mb-0">
                 {{ item.header }}
