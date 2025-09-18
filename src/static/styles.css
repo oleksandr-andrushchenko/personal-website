@@ -1,3 +1,12 @@
+body, * {
+    font-family: 'DM Sans', sans-serif;
+}
+
+h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5, .navbar-brand {
+    font-family: "Anton", sans-serif;
+    font-optical-sizing: auto;
+}
+
 .bg-img {
     position: relative;
     z-index: 0;
