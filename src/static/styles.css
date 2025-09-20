@@ -29,3 +29,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar-brand {
 .bg-img-light::before {
     opacity: .5;
 }
+
+.inline-block-children > * {
+    display: inline-block;
+}
