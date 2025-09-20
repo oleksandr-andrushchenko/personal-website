@@ -14,7 +14,7 @@
         {% set group_items = block["items"] | selectattr('group', 'equalto', group_key) | selectattr('active') | list %}
         {% if group_items %}
             <div class="mb-2 inline-block-children">
-                <span class="h6 text-secondary">{{ group_label }}</span>
+                <b class="text-bg-warning px-2">{{ group_label }}</b>
                 {% for item in group_items | shuffle %}
                     {% set font_size = (item.years * 0.15) if (item.years * 0.15) > 0.8 else 0.8 %}
                     <b class="text-bg-{{ item.color | default('light') }} px-2 ms-1"
