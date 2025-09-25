@@ -1,0 +1,12 @@
+<a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" class="link-secondary">
+    {% if item.image_filename %}
+        <img src="/{{ item.image_filename }}" class="card-img-top" alt="{{ item.header }}"/>
+    {% endif %}
+
+    <div class="card-body">
+        <h3 class="h5 card-title mb-0 d-print-none">
+            {{ item.header }}
+        </h3>
+        <span class="d-none d-print-block">{{ item.url }}</span>
+    </div>
+</a>
