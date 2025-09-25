@@ -1,4 +1,4 @@
-{% set items_active = block["items"] | selectattr("active") | sort(attribute="order") | list %}
+{% set items_active = block["items"] | selectattr("active") | list %}
 {% set items_visible = items_active[:block.items_visible_count] if block.items_visible_count else items_active %}
 {% set items_hidden = items_active[block.items_visible_count:] if block.items_visible_count else [] %}
 

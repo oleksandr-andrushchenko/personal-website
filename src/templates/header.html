@@ -21,7 +21,7 @@
                         {% endif %}
                     {% endfor %}
 
-                    {% for block in ns._nav_blocks | sort(attribute='order') %}
+                    {% for block in ns._nav_blocks %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ block.href }}">
                                 {{ block.nav }}
