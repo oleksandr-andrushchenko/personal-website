@@ -263,7 +263,9 @@ down: ## Stop local Docker containers
 .PHONY: rebuild
 rebuild: ## Rebuild and start Docker containers
 	$(DC) down
+	$(DC) build --no-cache
 	$(DC) up -d --remove-orphans
+	$(DC) logs -f
 
 .PHONY: login
 login: ## Open shell in Docker container
