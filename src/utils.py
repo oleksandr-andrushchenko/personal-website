@@ -52,7 +52,12 @@ def format_date_range(start_str, end_str=None):
         end, end_has_day = parse_date(end_str)
         end_fmt = end.strftime("%b %-d, %Y") if end_has_day else end.strftime("%b %Y")
 
-    diff = relativedelta(end, start)
+    # Adjust for month-only dates like LinkedIn
+    adj_end = end
+    if not start_has_day or not end_has_day:
+        # Add one month to make duration inclusive
+        adj_end += relativedelta(days=31)  # add enough days to cover one month
+    diff = relativedelta(adj_end, start)
 
     years = diff.years
     months = diff.months
