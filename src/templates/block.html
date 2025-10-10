@@ -42,7 +42,7 @@
 
     {% if items_hidden %}
         {% set toggle_id = 'toggle-hidden-' ~ block.id %}
-        <button class="btn btn-outline-secondary btn-sm mt-2 d-print-none" type="button"
+        <button class="btn btn-light btn-sm mt-2 d-print-none" type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#{{ toggle_id }}" aria-expanded="false"
                 aria-controls="{{ toggle_id }}">
