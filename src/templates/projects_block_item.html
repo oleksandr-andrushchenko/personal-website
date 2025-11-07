@@ -43,6 +43,10 @@
             {{ "col-xxl-10" if item.image_filename or experience_item.image_filename else "col-xxl-12" }}
         ">
             <h3 class="h4 card-title mb-0">
+                {% if item.icon %}
+                    <i class="bi bi-{{ item.icon }}"></i>
+                {% endif %}
+
                 {{ item.project }}
 
                 {% if item.founder %}
