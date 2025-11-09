@@ -1,0 +1,59 @@
+<div class="
+    card-body d-flex flex-column gap-2
+    gap-sm-2
+    gap-md-2
+    gap-xl-2
+    gap-xxl-2
+">
+    <div class="
+        row g-2
+        g-sm-2
+        g-md-3
+        g-xl-3
+        g-xxl-3
+    ">
+        {% if item.image_filename %}
+            <div class="
+                col col-3
+                col-sm-3
+                col-md-4
+                col-xl-4
+                col-xxl-4
+            ">
+                <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
+                    <img src="/{{ item.image_filename }}" class="rounded"
+                         style="max-height: {{ block.image.height }}px; max-width: {{ block.image.width }}px;width: 100%;
+                                 height: auto"
+                         alt="{{ item.header }}"/>
+                </a>
+            </div>
+        {% endif %}
+
+        <div class="
+            col {{ "col-9" if item.image_filename else "col-12" }}
+            {{ "col-sm-9" if item.image_filename else "col-sm-12" }}
+            {{ "col-md-8" if item.image_filename else "col-md-12" }}
+            {{ "col-xl-8" if item.image_filename else "col-xl-12" }}
+            {{ "col-xxl-8" if item.image_filename else "col-xxl-12" }}
+        ">
+            <a class="text-decoration-none link-secondary" href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
+                <h3 class="h5 card-title mb-0">
+                    {{ item.header }}
+                </h3>
+            </a>
+
+            <div class="d-flex flex-column gap-1">
+                <div class="card-text text-secondary">{{ item.platform }}</div>
+
+                {% if item.published_date %}
+                    <div class="card-text">
+                        <small class="text-body-secondary">
+                            <i class="bi bi-calendar"></i>
+                            {{ item.published_date | format_us_date }}
+                        </small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
