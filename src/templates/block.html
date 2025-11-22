@@ -42,13 +42,15 @@
 
     {% if items_hidden %}
         {% set toggle_id = 'toggle-hidden-' ~ block.id %}
-        <button class="btn btn-light btn-sm mt-2 d-print-none" type="button"
+        <a href="#" class="text-decoration-none link-body-emphasis btn-toggle mt-2 d-print-none" type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#{{ toggle_id }}" aria-expanded="false"
                 aria-controls="{{ toggle_id }}">
-            <i class="bi bi-arrow-down-up"></i>
+            <span class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-chevron-down"></i>
+            </span>
             {{ block.toggle_hidden }}
-        </button>
+        </a>
 
         <div class="d-none d-print-block">
             {{ block.toggle_hidden_print | replace("%url%", base_url ~ block.href) }}

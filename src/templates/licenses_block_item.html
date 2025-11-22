@@ -14,16 +14,25 @@
     ">
         {% if item.image_filename %}
             <div class="
+                d-print-none
                 col col-3
                 col-sm-3
                 col-md-4
                 col-xl-4
                 col-xxl-4
             ">
+                {% if item.url %}
+                    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
+                {% endif %}
+
                 <img src="/{{ item.image_filename }}" class="rounded"
                      style="max-height: {{ block.image.height }}px; max-width: {{ block.image.width }}px;width: 100%;
                              height: auto"
                      alt="{{ item.header }}"/>
+
+                {% if item.url %}
+                    </a>
+                {% endif %}
             </div>
         {% endif %}
 
@@ -34,24 +43,27 @@
             {{ "col-xl-8" if item.image_filename else "col-xl-12" }}
             {{ "col-xxl-8" if item.image_filename else "col-xxl-12" }}
         ">
-            <h3 class="h5 card-title mb-0">
+            {% if item.url %}
+                <a class="text-decoration-none link-body-emphasis me-1" href="{{ item.url }}" target="_blank"
+                   rel="noopener noreferrer">
+            {% endif %}
+
+            <h3 class="h5 card-title mb-0 d-inline">
                 {{ item.header }}
-                {% if item.ongoing %}
-                    <span class="badge text-bg-info">{{ block.ongoing }}</span>
-                {% endif %}
             </h3>
+
+            {% if item.ongoing %}
+                <span class="badge text-bg-info me-1">{{ block.ongoing }}</span>
+            {% endif %}
+
+            {% if item.url %}
+                <i class="bi bi-box-arrow-up-right d-print-none"></i>
+                <span class="d-none d-print-inline">{{ item.url }}</span>
+                </a>
+            {% endif %}
 
             <div class="d-flex flex-column gap-1">
                 <div class="card-text">{{ item.organization }}</div>
-
-                {% if item.url %}
-                    <div class="card-text d-print-none">
-                        <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
-                           target="_blank" rel="noopener noreferrer">
-                            {{ block.show_credential }} <i class="bi bi-box-arrow-up-right"></i>
-                        </a>
-                    </div>
-                {% endif %}
 
                 {% if item.start_date %}
                     <div class="card-text">

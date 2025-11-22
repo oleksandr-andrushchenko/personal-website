@@ -1,12 +1,14 @@
-<a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none link-secondary">
+<a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none link-body-emphasis">
     {% if item.image_filename %}
-        <img src="/{{ item.image_filename }}" class="card-img-top" alt="{{ item.header }}"/>
+        <img src="/{{ item.image_filename }}" class="card-img-top d-print-none" alt="{{ item.header }}"/>
     {% endif %}
 
     <div class="card-body">
-        <h3 class="h5 card-title mb-0 d-print-none">
+        <h3 class="h5 card-title mb-0 d-inline d-print-none">
             {{ item.header }}
         </h3>
-        <span class="d-none d-print-block">{{ item.url }}</span>
+
+        <i class="bi bi-box-arrow-up-right d-print-none"></i>
+        <span class="d-none d-print-inline">{{ item.url }}</span>
     </div>
 </a>

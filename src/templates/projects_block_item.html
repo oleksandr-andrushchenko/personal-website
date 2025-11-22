@@ -23,15 +23,25 @@
     ">
         {% if item.image_filename or experience_item.image_filename %}
             <div class="
+                d-print-none
                 col col-2
                 col-sm-2
                 col-md-2
                 col-xl-2
                 col-xxl-2
             ">
+                {% if item.url %}
+                    <a class="text-decoration-none link-body-emphasis" href="{{ item.url }}"
+                       target="_blank" rel="noopener noreferrer" title="{{ block.open_project }}">
+                {% endif %}
+
                 <img src="/{{ item.image_filename if item.image_filename else experience_item.image_filename }}"
                      class="rounded img-fluid"
                      alt="{{ item.project }}"/>
+
+                {% if item.url %}
+                    </a>
+                {% endif %}
             </div>
         {% endif %}
 
@@ -42,37 +52,57 @@
             {{ "col-xl-10" if item.image_filename or experience_item.image_filename else "col-xl-12" }}
             {{ "col-xxl-10" if item.image_filename or experience_item.image_filename else "col-xxl-12" }}
         ">
-            <h3 class="h4 card-title mb-0">
-                {% if item.icon %}
-                    <i class="bi bi-{{ item.icon }}"></i>
-                {% endif %}
+            {% if item.url %}
+                <a class="text-decoration-none link-body-emphasis me-1" href="{{ item.url }}"
+                   target="_blank" rel="noopener noreferrer" title="{{ block.open_project }}">
+            {% endif %}
 
+            {% if item.icon %}
+                <i class="bi bi-{{ item.icon }}"></i>
+            {% endif %}
+
+            <h3 class="h4 card-title mb-0 d-inline">
                 {{ item.project }}
-
-                {% if item.founder %}
-                    <span class="badge text-bg-primary me-1">{{ block.founder }}</span>
-                {% endif %}
-
-                {% if item.cofounder %}
-                    <span class="badge text-bg-primary me-1">{{ block.cofounder }}</span>
-                {% endif %}
-
-                {% if item.startup %}
-                    <span class="badge text-bg-success me-1">{{ block.startup }}</span>
-                {% endif %}
-
-                {% if item.ongoing %}
-                    <span class="badge text-bg-info me-1">{{ block.ongoing }}</span>
-                {% endif %}
-
-                {% if item.private %}
-                    <span class="badge text-bg-warning me-1">{{ block.private }}</span>
-                {% endif %}
-
-                {% if item.retired %}
-                    <span class="badge text-bg-danger me-1">{{ block.retired }}</span>
-                {% endif %}
             </h3>
+
+            {% if item.url %}
+                <i class="bi bi-box-arrow-up-right d-print-none"></i>
+                <span class="d-none d-print-inline">{{ item.url }}</span>
+                </a>
+            {% endif %}
+
+            {% if item.founder %}
+                <span class="badge text-bg-primary me-1">{{ block.founder }}</span>
+            {% endif %}
+
+            {% if item.cofounder %}
+                <span class="badge text-bg-primary me-1">{{ block.cofounder }}</span>
+            {% endif %}
+
+            {% if item.startup %}
+                <span class="badge text-bg-success me-1">{{ block.startup }}</span>
+            {% endif %}
+
+            {% if item.ongoing %}
+                <span class="badge text-bg-info me-1">{{ block.ongoing }}</span>
+            {% endif %}
+
+            {% if item.private %}
+                <span class="badge text-bg-warning me-1">{{ block.private }}</span>
+            {% endif %}
+
+            {% if item.retired %}
+                <span class="badge text-bg-danger me-1">{{ block.retired }}</span>
+            {% endif %}
+
+            <button class="btn btn-outline-secondary btn-sm btn-toggle rounded-circle d-print-none text-decoration-none"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#{{ toggle_id }}" aria-expanded="false"
+                    aria-controls="{{ toggle_id }}"
+                    title="{{ block.toggle_details }}">
+                <i class="bi bi-chevron-down"></i>
+            </button>
 
             <div class="card-text">
                 {{ item.description }}
@@ -83,36 +113,27 @@
     </div>
 
     <div class="d-flex flex-column gap-1">
-        <div class="d-flex gap-1 d-print-none">
-            <button class="btn btn-outline-secondary btn-sm" type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#{{ toggle_id }}" aria-expanded="false"
-                    aria-controls="{{ toggle_id }}">
-                <i class="bi bi-arrow-down-up"></i>
-                {{ block.toggle_details }}
-            </button>
-
-            {% if item.url %}
-                <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
-                   target="_blank" rel="noopener noreferrer">
-                    {{ block.open_project }} <i class="bi bi-box-arrow-up-right"></i>
-                </a>
-            {% endif %}
-        </div>
-
         <div class="collapse d-print-block" id="{{ toggle_id }}">
-            <div class="d-flex flex-column gap-1 py-2">
+            <div class="d-flex flex-column gap-1">
                 {% if experience_item %}
                     <div class="card-text">
                         <small class="text-body-secondary">
-                            {{ block.associated_with }} <b>{{ experience_item.company }}</b>
-                            {% if experience_item.url %}
-                                <a href="{{ experience_item.url }}" class="btn btn-sm btn-outline-secondary ms-1 d-print-none"
-                                   target="_blank" rel="noopener noreferrer">
-                                    {{ block.open_company }} <i
-                                        class="bi bi-box-arrow-up-right"></i>
-                                </a>
-                            {% endif %}
+                            {{ block.associated_with }}
+                            <b>
+                                {% if experience_item.url %}
+                                    <a class="text-decoration-none link-body-emphasis"
+                                       href="{{ experience_item.url }}" target="_blank" rel="noopener noreferrer"
+                                       title="{{ block.open_company }}">
+                                {% endif %}
+
+                                {{ experience_item.company }}
+
+                                {% if experience_item.url %}
+                                    <i class="bi bi-box-arrow-up-right d-print-none"></i>
+                                    <span class="d-none d-print-inline">{{ experience_item.url }}</span>
+                                    </a>
+                                {% endif %}
+                            </b>
                         </small>
                     </div>
                 {% endif %}

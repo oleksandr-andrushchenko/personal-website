@@ -22,6 +22,7 @@
     ">
         {% if item.image_filename %}
             <div class="
+                d-print-none
                 col col-2
                 col-sm-2
                 col-md-2
@@ -41,51 +42,64 @@
             {{ "col-xl-10" if item.image_filename else "col-xl-12" }}
             {{ "col-xxl-10" if item.image_filename else "col-xxl-12" }}
         ">
-            <h3 class="h4 card-title mb-0">
+            <h3 class="h4 card-title mb-0 d-inline">
                 {{ item.position }}
-                {% if item.ongoing %}
-                    <span class="badge text-bg-info">{{ block.ongoing }}</span>
-                {% endif %}
             </h3>
+
+            {% if item.ongoing %}
+                <span class="badge text-bg-info me-1">{{ block.ongoing }}</span>
+            {% endif %}
+
+            <button class="btn btn-outline-secondary btn-sm btn-toggle rounded-circle d-print-none text-decoration-none"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#{{ toggle_id }}" aria-expanded="false"
+                    aria-controls="{{ toggle_id }}"
+                    title="{{ block.toggle_details }}">
+                <i class="bi bi-chevron-down"></i>
+            </button>
+
             <div class="card-text">
-                {{ item.company }} - {{ item.employment_type }}
+                {% if item.url %}
+                    <a class="text-decoration-none link-body-emphasis" href="{{ item.url }}"
+                       target="_blank" rel="noopener noreferrer" title="{{ block.open_company }}">
+                {% endif %}
+
+                {{ item.company }}
+
+                {% if item.url %}
+                    <i class="bi bi-box-arrow-up-right d-print-none"></i>
+                    <span class="d-none d-print-inline">{{ item.url }}</span>
+                    </a>
+                {% endif %}
+
+                - {{ item.employment_type }}
             </div>
         </div>
     </div>
 
     <div class="d-flex flex-column gap-1">
-        <div class="d-flex gap-1 d-print-none">
-            <button class="btn btn-outline-secondary btn-sm" type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#{{ toggle_id }}" aria-expanded="false"
-                    aria-controls="{{ toggle_id }}">
-                <i class="bi bi-arrow-down-up"></i>
-                {{ block.toggle_details }}
-            </button>
-
-            {% if item.url %}
-                <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary"
-                   target="_blank" rel="noopener noreferrer">
-                    {{ block.open_company }} <i class="bi bi-box-arrow-up-right"></i>
-                </a>
-            {% endif %}
-        </div>
-
         <div class="collapse d-print-block" id="{{ toggle_id }}">
             <div class="d-flex flex-column gap-2 py-2">
                 {% set project_items_count = project_items | length %}
                 {% for project in project_items %}
                     <div class="card-text d-flex flex-column gap-1">
-                        <div class="h5 mb-0">{{ block.project }}{{ (" #" ~ loop.index) if project_items_count > 1 else "" }}: {{ project.project }}</div>
+                        <div class="h5 mb-0">
+                            {{ block.project }}{{ (" #" ~ loop.index) if project_items_count > 1 else "" }}:
 
-                        {% if project.url %}
-                            <div class="d-print-none">
-                                <a href="{{ project.url }}" class="btn btn-sm btn-outline-secondary"
-                                   target="_blank" rel="noopener noreferrer">
-                                    {{ block.open_project }} <i class="bi bi-box-arrow-up-right"></i>
+                            {% if project.url %}
+                                <a class="text-decoration-none link-body-emphasis" href="{{ project.url }}"
+                                   target="_blank" rel="noopener noreferrer" title="{{ block.open_project }}">
+                            {% endif %}
+
+                            {{ project.project }}
+
+                            {% if project.url %}
+                                <i class="bi bi-box-arrow-up-right d-print-none"></i>
+                                <span class="d-none d-print-inline">{{ project.url }}</span>
                                 </a>
-                            </div>
-                        {% endif %}
+                            {% endif %}
+                        </div>
 
                         {% if project.position %}
                             <small class="text-body-secondary">
