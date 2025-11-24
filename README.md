@@ -35,7 +35,6 @@
 - disable indexing of websites and images (3rd parties)
 - add pricing
 - add credentials to licenses and education
-- add badges (repeat) to experiences projects (as it is in projects sections now)
 
 ## Links
 

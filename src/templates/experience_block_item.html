@@ -84,21 +84,27 @@
                 {% set project_items_count = project_items | length %}
                 {% for project in project_items %}
                     <div class="card-text d-flex flex-column gap-1">
-                        <div class="h5 mb-0">
-                            {{ block.project }}{{ (" #" ~ loop.index) if project_items_count > 1 else "" }}:
+                        <div>
+                            <span class="h5 mb-0">
+                                {{ block.project }}{{ (" #" ~ loop.index) if project_items_count > 1 else "" }}:
 
-                            {% if project.url %}
-                                <a class="text-decoration-none link-body-emphasis" href="{{ project.url }}"
-                                   target="_blank" rel="noopener noreferrer" title="{{ block.open_project }}">
-                            {% endif %}
+                                {% if project.url %}
+                                    <a class="text-decoration-none link-body-emphasis" href="{{ project.url }}"
+                                       target="_blank" rel="noopener noreferrer" title="{{ block.open_project }}">
+                                {% endif %}
 
-                            {{ project.project }}
+                                {{ project.project }}
 
-                            {% if project.url %}
-                                <i class="bi bi-box-arrow-up-right d-print-none"></i>
-                                <span class="d-none d-print-inline">{{ project.url }}</span>
-                                </a>
-                            {% endif %}
+                                {% if project.url %}
+                                    <i class="bi bi-box-arrow-up-right d-print-none"></i>
+                                    <span class="d-none d-print-inline">{{ project.url }}</span>
+                                    </a>
+                                {% endif %}
+                            </span>
+
+                            {% with item=project, block=__ctx__.projects %}
+                                {% include "project_badges.html" ignore missing with context %}
+                            {% endwith %}
                         </div>
 
                         {% if project.position %}

@@ -1,0 +1,23 @@
+{% if item.founder %}
+    <span class="badge text-bg-primary me-1">{{ block.founder }}</span>
+{% endif %}
+
+{% if item.cofounder %}
+    <span class="badge text-bg-primary me-1">{{ block.cofounder }}</span>
+{% endif %}
+
+{% if item.startup %}
+    <span class="badge text-bg-success me-1">{{ block.startup }}</span>
+{% endif %}
+
+{% if item.ongoing %}
+    <span class="badge text-bg-info me-1">{{ block.ongoing }}</span>
+{% endif %}
+
+{% if item.private %}
+    <span class="badge text-bg-warning me-1">{{ block.private }}</span>
+{% endif %}
+
+{% if item.retired %}
+    <span class="badge text-bg-danger me-1">{{ block.retired }}</span>
+{% endif %}
