@@ -2,8 +2,17 @@
 include .env
 export
 
-DC = docker-compose
-APP_CONTAINER = $(DOCKER_CONTAINER)-app
+# Detect docker compose command
+ifeq (, $(shell command -v docker-compose 2>/dev/null))
+    ifeq (, $(shell command -v docker 2>/dev/null))
+        $(error "Docker is not installed")
+    endif
+    DC := docker compose
+else
+    DC := docker-compose
+endif
+
+APP_CONTAINER = app
 CODE_STACK_NAME = $(STACK_NAME)-code
 CERT_STACK_NAME = $(STACK_NAME)-cert
 SITE_BUILD_DIR=.site-build
@@ -269,18 +278,18 @@ rebuild: ## Rebuild and start Docker containers
 
 .PHONY: login
 login: ## Open shell in Docker container
-	docker exec -it $(APP_CONTAINER) bash
+	$(DC) exec -it $(APP_CONTAINER) bash
 
 .PHONY: logs
 logs: ## Show logs of Docker container
-	docker logs -f $(APP_CONTAINER)
+	$(DC) logs -f $(APP_CONTAINER)
 
 .PHONY: generate-site-files
 generate-site-files: ## Run content generator inside Docker container
 	@echo "📦 Generating Site files..."
 	@mkdir -p $(SITE_BUILD_DIR)
 	@rm -rf $(SITE_BUILD_DIR)/*
-	docker exec -it $(APP_CONTAINER) python generate.py
+	$(DC) exec -it $(APP_CONTAINER) python generate.py
 	@echo "✅ Site files saved to $(SITE_BUILD_DIR) successfully"
 
 .PHONY: generate-code-files

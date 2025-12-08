@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ${DOCKER_CONTAINER}-app
     volumes:
       - ./:/app
     working_dir: /app/src
@@ -14,9 +13,3 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
-    networks:
-      - network
-
-networks:
-  network:
-    name: ${DOCKER_CONTAINER}-network
