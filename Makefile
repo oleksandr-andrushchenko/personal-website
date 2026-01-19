@@ -269,6 +269,9 @@ up: ## Start local Docker containers
 down: ## Stop local Docker containers
 	$(DC) down
 
+.PHONY: restart
+restart: down up ## Restart local Docker containers
+
 .PHONY: rebuild
 rebuild: ## Rebuild and start Docker containers
 	$(DC) down
