@@ -2,6 +2,16 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Personal Website infrastructure with S3, CloudFront, Lambda, SES, SNS
 
 Parameters:
+  Project:
+    Type: String
+    Description: Logical project identifier (e.g. blog)
+  Owner:
+    Type: String
+    Description: Resource owner (e.g. olek)
+  Stage:
+    Type: String
+    Description: Deployment stage (e.g. local, dev, test, prod, etc.)
+    AllowedValues: [ local, dev, test, prod ]
   DomainName:
     Type: String
     Description: e.g. personal-website.com
@@ -17,18 +27,6 @@ Parameters:
   NotificationPhone:
     Type: String
     Description: Phone number for SMS (e.g. +15551234567)
-  TagProject:
-    Type: String
-    Description: Logical project identifier (e.g. personal-website)
-  TagOwner:
-    Type: String
-    Description: Resource owner (e.g. olek)
-  TagEnvironment:
-    Type: String
-    Description: Deployment environment (e.g. prod)
-  TagRegion:
-    Type: String
-    Description: AWS region (e.g. us-west-2)
 
 Resources:
   SiteBucket:
@@ -41,14 +39,14 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
       Tags:
-        - Key: Environment
-          Value: !Ref TagEnvironment
+        - Key: Stage
+          Value: !Ref Stage
         - Key: Project
-          Value: !Ref TagProject
+          Value: !Ref Project
         - Key: Owner
-          Value: !Ref TagOwner
+          Value: !Ref Owner
         - Key: Region
-          Value: !Ref TagRegion
+          Value: !Ref AWS::Region
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -107,14 +105,14 @@ Resources:
             ResponseCode: 404
             ErrorCachingMinTTL: 300
       Tags:
-        - Key: Environment
-          Value: !Ref TagEnvironment
+        - Key: Stage
+          Value: !Ref Stage
         - Key: Project
-          Value: !Ref TagProject
+          Value: !Ref Project
         - Key: Owner
-          Value: !Ref TagOwner
+          Value: !Ref Owner
         - Key: Region
-          Value: !Ref TagRegion
+          Value: !Ref AWS::Region
 
   DNSRecord:
     Type: AWS::Route53::RecordSet
@@ -136,14 +134,14 @@ Resources:
         - Protocol: sms
           Endpoint: !Ref NotificationPhone
       Tags:
-        - Key: Environment
-          Value: !Ref TagEnvironment
+        - Key: Stage
+          Value: !Ref Stage
         - Key: Project
-          Value: !Ref TagProject
+          Value: !Ref Project
         - Key: Owner
-          Value: !Ref TagOwner
+          Value: !Ref Owner
         - Key: Region
-          Value: !Ref TagRegion
+          Value: !Ref AWS::Region
 
   ContactFormFunctionRole:
     Type: AWS::IAM::Role
@@ -173,14 +171,14 @@ Resources:
                   - logs:PutLogEvents
                 Resource: "*"
       Tags:
-        - Key: Environment
-          Value: !Ref TagEnvironment
+        - Key: Stage
+          Value: !Ref Stage
         - Key: Project
-          Value: !Ref TagProject
+          Value: !Ref Project
         - Key: Owner
-          Value: !Ref TagOwner
+          Value: !Ref Owner
         - Key: Region
-          Value: !Ref TagRegion
+          Value: !Ref AWS::Region
 
   ContactFormFunction:
     Type: AWS::Lambda::Function
@@ -198,14 +196,14 @@ Resources:
         S3Bucket: !Sub "${AWS::StackName}-code"
         S3Key: contact-form-function.zip
       Tags:
-        - Key: Environment
-          Value: !Ref TagEnvironment
+        - Key: Stage
+          Value: !Ref Stage
         - Key: Project
-          Value: !Ref TagProject
+          Value: !Ref Project
         - Key: Owner
-          Value: !Ref TagOwner
+          Value: !Ref Owner
         - Key: Region
-          Value: !Ref TagRegion
+          Value: !Ref AWS::Region
 
   ContactFormFunctionUrl:
     Type: AWS::Lambda::Url
@@ -233,14 +231,14 @@ Resources:
       LogGroupName: !Sub "/aws/lambda/${ContactFormFunction}"
       RetentionInDays: 14  # or 3, 7, 30, 90, etc.
       Tags:
-        - Key: Environment
-          Value: !Ref TagEnvironment
+        - Key: Stage
+          Value: !Ref Stage
         - Key: Project
-          Value: !Ref TagProject
+          Value: !Ref Project
         - Key: Owner
-          Value: !Ref TagOwner
+          Value: !Ref Owner
         - Key: Region
-          Value: !Ref TagRegion
+          Value: !Ref AWS::Region
 
 Outputs:
   WebsiteURL:

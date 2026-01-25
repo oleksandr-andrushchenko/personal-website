@@ -3,6 +3,7 @@
 ## Available commands
 
 ```
+  aws-login            Obtain AWS auth token
   clean                Remove build artifacts
   delete-cert-infra    Delete cert CF stack
   delete-code-infra    Delete code CF stack
@@ -26,6 +27,7 @@
   logs                 Show logs of Docker container
   open                 Show local site URL
   rebuild              Rebuild and start Docker containers
+  restart              Restart local Docker containers
   up                   Start local Docker containers
 ```
 
