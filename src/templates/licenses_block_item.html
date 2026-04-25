@@ -15,7 +15,7 @@
         {% if item.image_filename %}
             <div class="
                 d-print-none
-                col col-3
+                col col-12
                 col-sm-3
                 col-md-4
                 col-xl-4
@@ -25,10 +25,7 @@
                     <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
                 {% endif %}
 
-                <img src="/{{ item.image_filename }}" class="rounded"
-                     style="max-height: {{ block.image.height }}px; max-width: {{ block.image.width }}px;width: 100%;
-                             height: auto"
-                     alt="{{ item.header }}"/>
+                <img src="/{{ item.image_filename }}" class="rounded img-fluid" alt="{{ item.header }}"/>
 
                 {% if item.url %}
                     </a>

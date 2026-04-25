@@ -23,20 +23,18 @@
         {% if item.image_filename %}
             <div class="
                 d-print-none
-                col col-2
+                col col-12
                 col-sm-2
                 col-md-2
                 col-xl-2
                 col-xxl-2
             ">
-                <img src="/{{ item.image_filename }}" class="rounded img-fluid"
-                     style="max-height:{{ block.image.height }}px; max-width:{{ block.image.width }}px"
-                     alt="{{ item.company }}"/>
+                <img src="/{{ item.image_filename }}" class="rounded img-fluid" alt="{{ item.company }}"/>
             </div>
         {% endif %}
 
         <div class="
-            col {{ "col-10" if item.image_filename else "col-12" }}
+            col col-12
             {{ "col-sm-10" if item.image_filename else "col-sm-12" }}
             {{ "col-md-10" if item.image_filename else "col-md-12" }}
             {{ "col-xl-10" if item.image_filename else "col-xl-12" }}

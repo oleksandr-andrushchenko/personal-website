@@ -14,8 +14,25 @@
         g-xl-3
         g-xxl-3
     ">
+        {% if has_image %}
+            <div class="
+                d-print-none
+                col col-12
+                col-sm-3
+                col-md-4
+                col-xl-4
+                col-xxl-4
+            ">
+                <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
+                    <img src="{{ item.image_url if item.image_url else ('/' ~ item.image_filename) }}"
+                         class="rounded img-fluid"
+                         alt="{{ item.header }}"/>
+                </a>
+            </div>
+        {% endif %}
+
         <div class="
-            col {{ "col-9" if has_image else "col-12" }}
+            col col-12
             {{ "col-sm-9" if has_image else "col-sm-12" }}
             {{ "col-md-8" if has_image else "col-md-12" }}
             {{ "col-xl-8" if has_image else "col-xl-12" }}
@@ -44,23 +61,5 @@
                 {% endif %}
             </div>
         </div>
-
-        {% if has_image %}
-            <div class="
-                d-print-none
-                col col-3
-                col-sm-3
-                col-md-4
-                col-xl-4
-                col-xxl-4
-            ">
-                <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
-                    <img src="{{ item.image_url if item.image_url else ('/' ~ item.image_filename) }}" class="rounded"
-                         style="max-height: {{ block.image.height }}px; max-width: {{ block.image.width }}px;width: 100%;
-                                 height: auto"
-                         alt="{{ item.header }}"/>
-                </a>
-            </div>
-        {% endif %}
     </div>
 </div>
