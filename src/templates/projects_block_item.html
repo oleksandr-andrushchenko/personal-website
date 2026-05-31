@@ -7,6 +7,9 @@
     {% set experience_item = {} %}
 {% endif %}
 
+{% set has_image = item.image_filename or experience_item.image_filename %}
+{% set has_image_or_icon = has_image or item.icon %}
+
 <div class="
     card-body d-flex flex-column gap-2
     gap-sm-2
@@ -21,7 +24,7 @@
         g-xl-3
         g-xxl-3
     ">
-        {% if item.image_filename or experience_item.image_filename %}
+        {% if has_image_or_icon %}
             <div class="
                 d-print-none
                 col col-12
@@ -35,9 +38,13 @@
                        target="_blank" rel="noopener noreferrer" title="{{ block.open_project }}">
                 {% endif %}
 
-                <img src="/{{ item.image_filename if item.image_filename else experience_item.image_filename }}"
-                     class="rounded img-fluid"
-                     alt="{{ item.project }}"/>
+                {% if has_image %}
+                    <img src="/{{ item.image_filename if item.image_filename else experience_item.image_filename }}"
+                         class="rounded img-fluid"
+                         alt="{{ item.project }}"/>
+                {% elif item.icon %}
+                    <i class="bi bi-{{ item.icon }}" style="font-size:250%"></i>
+                {% endif %}
 
                 {% if item.url %}
                     </a>
@@ -47,18 +54,14 @@
 
         <div class="
             col col-12
-            {{ "col-sm-10" if item.image_filename or experience_item.image_filename else "col-sm-12" }}
-            {{ "col-md-10" if item.image_filename or experience_item.image_filename else "col-md-12" }}
-            {{ "col-xl-10" if item.image_filename or experience_item.image_filename else "col-xl-12" }}
-            {{ "col-xxl-10" if item.image_filename or experience_item.image_filename else "col-xxl-12" }}
+            {{ "col-sm-10" if has_image_or_icon else "col-sm-12" }}
+            {{ "col-md-10" if has_image_or_icon else "col-md-12" }}
+            {{ "col-xl-10" if has_image_or_icon else "col-xl-12" }}
+            {{ "col-xxl-10" if has_image_or_icon else "col-xxl-12" }}
         ">
             {% if item.url %}
                 <a class="text-decoration-none link-body-emphasis me-1" href="{{ item.url }}"
                    target="_blank" rel="noopener noreferrer" title="{{ block.open_project }}">
-            {% endif %}
-
-            {% if item.icon %}
-                <i class="bi bi-{{ item.icon }}"></i>
             {% endif %}
 
             <h3 class="h4 card-title mb-0 d-inline">
