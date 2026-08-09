@@ -1,8 +1,12 @@
-h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar-brand {
+body {
     font-family: "Rethink Sans", sans-serif;
     font-optical-sizing: auto;
-    font-weight: bold;
     font-style: normal;
+    font-weight: 400;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar-brand {
+    font-weight: 700;
 }
 
 .bg-img {
