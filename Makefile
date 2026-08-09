@@ -254,7 +254,7 @@ drop-cdn-cache: check-env check-aws ## Invalidate CloudFront cache for the site
 			--profile $(AWS_PROJECT) \
 			--region $(AWS_REGION) \
 			--distribution-id "$$DISTRIBUTION_ID" \
-			--paths "/*"; \
+			--paths "/" "/index.html"; \
 	else \
 		echo "⚠️  CloudFront distribution not found for $(DOMAIN_NAME) — skipping invalidation."; \
 	fi
