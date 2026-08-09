@@ -1,8 +1,9 @@
+import os
+from pathlib import Path
+
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
-from pathlib import Path
-import os
 
 from utils import (
     load_merged_data,

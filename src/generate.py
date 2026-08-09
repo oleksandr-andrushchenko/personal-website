@@ -1,12 +1,13 @@
-import requests
 import shutil
 from pathlib import Path
 from urllib.parse import urljoin
+
+import requests
+
 from utils import load_merged_routes
 
 # Base settings
 BASE_URL = "http://localhost:8000"
-allowed_routes = load_merged_routes()
 
 ASSET_DIR = Path(__file__).parent / "static"
 OUTPUT_DIR = Path(__file__).parent.parent / ".site-build"
@@ -26,7 +27,7 @@ shutil.copytree(ASSET_DIR, OUTPUT_DIR, dirs_exist_ok=True)
 print("✅ Copied static")
 
 # Download each route from the web server
-for route, template_path in allowed_routes.items():
+for route, template_path in load_merged_routes().items():
     try:
         url = urljoin(BASE_URL, route)
         response = requests.get(url)

@@ -1,10 +1,11 @@
 import json
-from pathlib import Path
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 import random
-import htmlmin
 import re
+from datetime import datetime
+from pathlib import Path
+
+import htmlmin
+from dateutil.relativedelta import relativedelta
 from dotenv import load_dotenv
 
 
