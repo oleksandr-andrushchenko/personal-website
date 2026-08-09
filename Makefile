@@ -259,6 +259,9 @@ drop-cdn-cache: check-env check-aws ## Invalidate CloudFront cache for the site
 		echo "⚠️  CloudFront distribution not found for $(DOMAIN_NAME) — skipping invalidation."; \
 	fi
 
+.PHONY: deploy
+deploy: aws-login restart deploy-code-files deploy-site-files deploy-infra drop-cdn-cache ## Deploy infrastructure, code, site, and refresh HTML
+
 .PHONY: up
 up: ## Start local Docker containers
 	$(DC) up -d --remove-orphans
