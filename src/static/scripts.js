@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Reveal clipped content when reached with a keyboard.
     grid.addEventListener("focusin", event => {
       if (!expanded && event.target.getBoundingClientRect().bottom >
-          preview.getBoundingClientRect().bottom - button.offsetHeight) {
+        preview.getBoundingClientRect().bottom - button.offsetHeight) {
         expand()
       }
     })
@@ -89,4 +89,51 @@ document.addEventListener("DOMContentLoaded", function () {
       icon.classList.add("bi-chevron-down")
     })
   })
+
+  ;(function () {
+    // Contact form
+    const form = document.querySelector("#contact-form")
+    const statusDiv = document.getElementById("form-status")
+    if (!form || !statusDiv) return
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+
+      form.classList.add("was-validated")
+
+      if (!form.checkValidity()) {
+        return
+      }
+
+      const name = form.name.value.trim()
+      const email = form.email.value.trim()
+      const message = form.message.value.trim()
+
+      try {
+        const response = await fetch(form.dataset.endpoint, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({name, email, message})
+        })
+
+        const result = await response.json()
+
+        if (response.ok) {
+          statusDiv.className = "alert alert-success"
+          statusDiv.textContent = result.message || form.dataset.messageSent
+          form.reset()
+          form.classList.remove("was-validated")
+        } else {
+          statusDiv.className = "alert alert-danger"
+          statusDiv.textContent = result.message || form.dataset.messageFailed
+        }
+      } catch (err) {
+        statusDiv.className = "alert alert-danger"
+        statusDiv.textContent = form.dataset.messageUnknown
+      }
+
+      statusDiv.classList.remove("d-none")
+    })
+  })()
 })

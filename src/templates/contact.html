@@ -11,7 +11,11 @@
     </h2>
     <div class="row row-cols-1 row-cols-md-2">
         <div class="col">
-            <form class="row row-cols-1 g-3" id="contact-form" novalidate>
+            <form class="row row-cols-1 g-3" id="contact-form" novalidate
+                  data-endpoint="{{ env.CONTACT_FORM_FUNCTION_URL | e }}"
+                  data-message-sent="{{ block.message_sent_label | e }}"
+                  data-message-failed="{{ block.message_failed_label | e }}"
+                  data-message-unknown="{{ block.message_unknown_label | e }}">
                 <div class="col">
                     <input type="text" class="form-control" id="name" name="name" placeholder="{{ block.name_label }}"
                            required>
@@ -64,50 +68,3 @@
         </div>
     </div>
 </div>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.querySelector("#contact-form")
-    const statusDiv = document.getElementById("form-status")
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault()
-      event.stopPropagation()
-
-      form.classList.add("was-validated")
-
-      if (!form.checkValidity()) {
-        return
-      }
-
-      const name = form.name.value.trim()
-      const email = form.email.value.trim()
-      const message = form.message.value.trim()
-
-      try {
-        const response = await fetch("{{ env.CONTACT_FORM_FUNCTION_URL }}", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({name, email, message})
-        })
-
-        const result = await response.json()
-
-        if (response.ok) {
-          statusDiv.className = "alert alert-success"
-          statusDiv.textContent = result.message || "{{ block.message_sent_label }}"
-          form.reset()
-          form.classList.remove("was-validated")
-        } else {
-          statusDiv.className = "alert alert-danger"
-          statusDiv.textContent = result.message || "{{ block.message_failed_label }}"
-        }
-      } catch (err) {
-        statusDiv.className = "alert alert-danger"
-        statusDiv.textContent = "{{ block.message_unknown_label }}"
-      }
-
-      statusDiv.classList.remove("d-none")
-    })
-  })
-</script>
