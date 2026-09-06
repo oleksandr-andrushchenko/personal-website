@@ -1,23 +1,23 @@
 {% if item.founder %}
-    <span class="badge text-bg-primary me-1">{{ block.founder }}</span>
+    <span class="badge rounded-pill bg-primary me-1">{{ block.founder }}</span>
 {% endif %}
 
 {% if item.cofounder %}
-    <span class="badge text-bg-primary me-1">{{ block.cofounder }}</span>
+    <span class="badge rounded-pill bg-primary me-1">{{ block.cofounder }}</span>
 {% endif %}
 
 {% if item.startup %}
-    <span class="badge text-bg-success me-1">{{ block.startup }}</span>
+    <span class="badge rounded-pill bg-success me-1">{{ block.startup }}</span>
 {% endif %}
 
 {% if item.ongoing %}
-    <span class="badge text-bg-info me-1">{{ block.ongoing }}</span>
+    <span class="badge rounded-pill bg-info text-dark me-1">{{ block.ongoing }}</span>
 {% endif %}
 
 {% if item.private %}
-    <span class="badge text-bg-warning me-1">{{ block.private }}</span>
+    <span class="badge rounded-pill bg-warning text-dark me-1">{{ block.private }}</span>
 {% endif %}
 
 {% if item.retired %}
-    <span class="badge text-bg-danger me-1">{{ block.retired }}</span>
+    <span class="badge rounded-pill bg-danger me-1">{{ block.retired }}</span>
 {% endif %}

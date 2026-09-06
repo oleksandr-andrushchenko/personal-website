@@ -9,26 +9,26 @@
     ">
         {{ block.header }}
     </h2>
-    <div class="row">
-        <div class="col-12 col-md-6">
-            <form class="row g-3" id="contact-form" novalidate>
-                <div class="col-12">
+    <div class="row row-cols-1 row-cols-md-2">
+        <div class="col">
+            <form class="row row-cols-1 g-3" id="contact-form" novalidate>
+                <div class="col">
                     <input type="text" class="form-control" id="name" name="name" placeholder="{{ block.name_label }}"
                            required>
                     <div class="invalid-feedback">{{ block.name_error_label }}</div>
                 </div>
-                <div class="col-12">
+                <div class="col">
                     <input type="email" class="form-control" id="email" name="email"
                            placeholder="{{ block.email_label }}" required>
                     <div class="invalid-feedback">{{ block.email_error_label }}</div>
                 </div>
-                <div class="col-12">
+                <div class="col">
                     <textarea class="form-control" id="message" name="message" placeholder="{{ block.message_label }}"
                               rows="10"
                               required></textarea>
                     <div class="invalid-feedback">{{ block.message_error_label }}</div>
                 </div>
-                <div class="col-12">
+                <div class="col">
                     <div id="form-status" class="alert d-none" role="alert"></div>
                     <button type="submit" class="btn btn-dark btn-sm">
                         {{ block.send_message_label }} <i class="bi bi-chevron-right"></i>
@@ -37,7 +37,7 @@
             </form>
         </div>
 
-        <div class="col-12 col-md-6 mt-5 mt-md-0 text-center text-md-start">
+        <div class="col mt-5 mt-md-0 text-center text-md-start">
             <h3 class="mb-4">{{ block.contact_details_label }}</h3>
             <div class="d-flex flex-column gap-3">
                 {% if contacts.phone and contacts.phone.active %}

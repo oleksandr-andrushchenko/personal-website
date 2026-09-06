@@ -6,83 +6,51 @@
     {% set project_items = [] %}
 {% endif %}
 
-<div class="
-    card-body d-flex flex-column gap-2
-    gap-sm-2
-    gap-md-2
-    gap-xl-2
-    gap-xxl-2
-">
-    <div class="
-        row g-2
-        g-sm-2
-        g-md-3
-        g-xl-3
-        g-xxl-3
-    ">
-        {% if item.image_filename %}
-            <div class="
-                d-print-none
-                col col-12
-                col-sm-2
-                col-md-2
-                col-xl-2
-                col-xxl-2
-            ">
-                <img src="/{{ item.image_filename }}" class="rounded img-fluid" alt="{{ item.company }}"/>
-            </div>
+{% if item.image_filename %}
+    <img src="/{{ item.image_filename }}" class="card-img-top d-print-none" alt="{{ item.company }}"/>
+{% endif %}
+
+<div class="card-body">
+    <h3 class="h4 card-title mb-0 d-inline">
+        {{ item.position }}
+    </h3>
+
+    {% if item.ongoing %}
+        <span class="badge rounded-pill bg-info text-dark me-1">{{ block.ongoing }}</span>
+    {% endif %}
+
+    <button class="btn btn-outline-secondary btn-sm btn-toggle rounded-circle d-print-none text-decoration-none"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#{{ toggle_id }}" aria-expanded="false"
+            aria-controls="{{ toggle_id }}"
+            title="{{ block.toggle_details }}">
+        <i class="bi bi-chevron-down"></i>
+    </button>
+
+    <div class="card-text">
+        {% if item.url %}
+            <a class="text-decoration-none link-body-emphasis" href="{{ item.url }}"
+               target="_blank" rel="noopener noreferrer" title="{{ block.open_company }}">
         {% endif %}
 
-        <div class="
-            col col-12
-            {{ "col-sm-10" if item.image_filename else "col-sm-12" }}
-            {{ "col-md-10" if item.image_filename else "col-md-12" }}
-            {{ "col-xl-10" if item.image_filename else "col-xl-12" }}
-            {{ "col-xxl-10" if item.image_filename else "col-xxl-12" }}
-        ">
-            <h3 class="h4 card-title mb-0 d-inline">
-                {{ item.position }}
-            </h3>
+        {{ item.company }}
 
-            {% if item.ongoing %}
-                <span class="badge text-bg-info me-1">{{ block.ongoing }}</span>
-            {% endif %}
+        {% if item.url %}
+            <i class="bi bi-box-arrow-up-right d-print-none"></i>
+            <span class="d-none d-print-inline">{{ item.url }}</span>
+            </a>
+        {% endif %}
 
-            <button class="btn btn-outline-secondary btn-sm btn-toggle rounded-circle d-print-none text-decoration-none"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#{{ toggle_id }}" aria-expanded="false"
-                    aria-controls="{{ toggle_id }}"
-                    title="{{ block.toggle_details }}">
-                <i class="bi bi-chevron-down"></i>
-            </button>
-
-            <div class="card-text">
-                {% if item.url %}
-                    <a class="text-decoration-none link-body-emphasis" href="{{ item.url }}"
-                       target="_blank" rel="noopener noreferrer" title="{{ block.open_company }}">
-                {% endif %}
-
-                {{ item.company }}
-
-                {% if item.url %}
-                    <i class="bi bi-box-arrow-up-right d-print-none"></i>
-                    <span class="d-none d-print-inline">{{ item.url }}</span>
-                    </a>
-                {% endif %}
-
-                - {{ item.employment_type }}
-            </div>
-        </div>
+        - {{ item.employment_type }}
     </div>
 
-    <div class="d-flex flex-column gap-1">
-        <div class="collapse d-print-block" id="{{ toggle_id }}">
-            <div class="d-flex flex-column gap-2 py-2">
-                {% set project_items_count = project_items | length %}
-                {% for project in project_items %}
-                    <div class="card-text d-flex flex-column gap-1">
-                        <div>
+    <div class="collapse d-print-block" id="{{ toggle_id }}">
+        <div class="d-flex flex-column gap-2 py-2">
+            {% set project_items_count = project_items | length %}
+            {% for project in project_items %}
+                <div class="card-text d-flex flex-column gap-1">
+                    <div>
                             <span class="h5 mb-0">
                                 {{ block.project }}{{ (" #" ~ loop.index) if project_items_count > 1 else "" }}:
 
@@ -100,55 +68,54 @@
                                 {% endif %}
                             </span>
 
-                            {% with item=project, block=__ctx__.projects %}
-                                {% include "project_badges.html" ignore missing with context %}
-                            {% endwith %}
-                        </div>
-
-                        {% if project.position %}
-                            <small class="text-body-secondary">
-                                {{ project.position }}
-                            </small>
-                        {% endif %}
-
-                        <ul class="mb-0">
-                            {% for achievement in project.achievements %}
-                                <li>{{ achievement }}</li>
-                            {% endfor %}
-                        </ul>
-
-                        {% if project.tags %}
-                            <div class="card-text">
-                                <small class="text-body-secondary">
-                                    <i class="bi bi-tags"></i>
-                                    {{ project.tags | unique | join(' · ') }}
-                                </small>
-                            </div>
-                        {% endif %}
+                        {% with item=project, block=__ctx__.projects %}
+                            {% include "project_badges.html" ignore missing with context %}
+                        {% endwith %}
                     </div>
-                {% endfor %}
-            </div>
-        </div>
 
-        {% if item.start_date %}
-            <div class="card-text">
-                <small class="text-body-secondary">
-                    <i class="bi bi-calendar"></i>
-                    {{ item.start_date | date_range(item.end_date) }}
-                </small>
-            </div>
-        {% endif %}
-
-        {% if item.location %}
-            <div class="card-text">
-                <small class="text-body-secondary">
-                    <i class="bi bi-geo"></i>
-                    {{ item.location }}
-                    {% if item.location_type %}
-                        · {{ item.location_type }}
+                    {% if project.position %}
+                        <small class="text-body-secondary">
+                            {{ project.position }}
+                        </small>
                     {% endif %}
-                </small>
-            </div>
-        {% endif %}
+
+                    <ul class="mb-0">
+                        {% for achievement in project.achievements %}
+                            <li>{{ achievement }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    {% if project.tags %}
+                        <div class="card-text">
+                            <small class="text-body-secondary">
+                                <i class="bi bi-tags"></i>
+                                {{ project.tags | unique | join(' · ') }}
+                            </small>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
+
+    {% if item.start_date %}
+        <div class="card-text">
+            <small class="text-body-secondary">
+                <i class="bi bi-calendar"></i>
+                {{ item.start_date | date_range(item.end_date) }}
+            </small>
+        </div>
+    {% endif %}
+
+    {% if item.location %}
+        <div class="card-text">
+            <small class="text-body-secondary">
+                <i class="bi bi-geo"></i>
+                {{ item.location }}
+                {% if item.location_type %}
+                    · {{ item.location_type }}
+                {% endif %}
+            </small>
+        </div>
+    {% endif %}
 </div>

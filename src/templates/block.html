@@ -1,6 +1,4 @@
 {% set items_active = block["items"] | selectattr("active") | list %}
-{% set items_visible = items_active[:block.items_visible_count] if block.items_visible_count else items_active %}
-{% set items_hidden = items_active[block.items_visible_count:] if block.items_visible_count else [] %}
 
 <div class="container" id="{{ block.id }}">
     <h2 class="
@@ -11,76 +9,38 @@
         mb-xl-3
         mb-xxl-3
     ">
-        {{ block.header }} ( {{ items_active | length }} )
+        {{ block.header }} &mdash; {{ items_active | length }}
     </h2>
 
-    <div class="
-        row g-1
-        g-sm-1
-        g-md-2
-        g-xl-3
-        g-xxl-3
-    ">
-        {% set salt = block.id %}
-        {% for item in items_visible %}
-            <div class="
-                col col-12
-                col-sm-{{ 12 // (block.cols.sm | default(1)) }}
-                col-md-{{ 12 // (block.cols.md | default(2)) }}
-                col-lg-{{ 12 // (block.cols.lg | default(3)) }}
-                col-xl-{{ 12 // (block.cols.xl | default(3)) }}
-                col-xxl-{{ 12 // (block.cols.xxl | default(3)) }}
-            ">
-                {% set index = loop.index %}
+    <div class="masonry-preview" data-masonry-preview>
+        <div id="grid-{{ block.id }}" tabindex="-1" class="
+            row row-cols-1 g-1
+            row-cols-sm-{{ block.cols.sm | default(1) }}
+            row-cols-md-{{ block.cols.md | default(2) }}
+            row-cols-lg-{{ block.cols.lg | default(3) }}
+            row-cols-xl-{{ block.cols.xl | default(3) }}
+            row-cols-xxl-{{ block.cols.xxl | default(3) }}
+            g-sm-1
+            g-md-2
+            g-xl-3
+            g-xxl-3
+        " data-masonry='{"percentPosition":true}'>
+            {% set salt = block.id %}
+            {% for item in items_active %}
+                <div class="col">
+                    {% set index = loop.index %}
 
-                <div class="card bg-light">
-                    {% include (block.id ~ "_block_item.html") with context %}
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
-    {% if items_hidden %}
-        {% set toggle_id = 'toggle-hidden-' ~ block.id %}
-        <a href="#" class="text-decoration-none link-body-emphasis btn-toggle mt-2 d-print-none" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#{{ toggle_id }}" aria-expanded="false"
-                aria-controls="{{ toggle_id }}">
-            <span class="btn btn-outline-secondary btn-sm rounded-circle">
-                <i class="bi bi-chevron-down"></i>
-            </span>
-            {{ block.toggle_hidden }}
-        </a>
-
-        <div class="d-none d-print-block">
-            {{ block.toggle_hidden_print | replace("%url%", base_url ~ block.href) }}
-        </div>
-
-        <div class="collapse" id="{{ toggle_id }}">
-            <div class="
-                row g-1 py-3
-                g-sm-1
-                g-md-2
-                g-xl-3
-                g-xxl-3
-            ">
-                {% set salt = block.id ~ '-hidden' %}
-                {% for item in items_hidden %}
-                    <div class="
-                        col col-12
-                        col-sm-{{ 12 // (block.cols.sm | default(1)) }}
-                        col-md-{{ 12 // (block.cols.md | default(2)) }}
-                        col-lg-{{ 12 // (block.cols.lg | default(3)) }}
-                        col-xl-{{ 12 // (block.cols.xl | default(3)) }}
-                        col-xxl-{{ 12 // (block.cols.xxl | default(3)) }}
-                    ">
-                        {% set index = loop.index %}
-                        <div class="card bg-light">
-                            {% include (block.id ~ "_block_item.html") with context %}
-                        </div>
+                    <div class="card bg-light shadow-sm">
+                        {% include (block.id ~ "_block_item.html") with context %}
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
         </div>
-    {% endif %}
+
+        <button class="masonry-preview-expand" type="button" hidden
+                aria-expanded="false" aria-controls="grid-{{ block.id }}">
+            <span>Show all {{ items_active | length }} <span class="visually-hidden">{{ block.header }}</span></span>
+            <i class="bi bi-chevron-down" aria-hidden="true"></i>
+        </button>
+    </div>
 </div>

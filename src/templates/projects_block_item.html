@@ -8,157 +8,119 @@
 {% endif %}
 
 {% set has_image = item.image_filename or experience_item.image_filename %}
-{% set has_image_or_icon = has_image or item.icon %}
 
-<div class="
-    card-body d-flex flex-column gap-2
-    gap-sm-2
-    gap-md-2
-    gap-xl-2
-    gap-xxl-2
-">
-    <div class="
-        row g-2
-        g-sm-2
-        g-md-3
-        g-xl-3
-        g-xxl-3
-    ">
-        {% if has_image_or_icon %}
-            <div class="
-                d-print-none
-                col col-12
-                col-sm-2
-                col-md-2
-                col-xl-2
-                col-xxl-2
-            ">
-                {% if item.url %}
-                    <a class="text-decoration-none link-body-emphasis" href="{{ item.url }}"
-                       target="_blank" rel="noopener noreferrer" title="{{ block.open_project }}">
-                {% endif %}
+{% if has_image %}
+    {% if item.url %}
+        <a class="d-print-none text-decoration-none link-body-emphasis" href="{{ item.url }}"
+           target="_blank" rel="noopener noreferrer" title="{{ block.open_project }}">
+    {% endif %}
 
-                {% if has_image %}
-                    <img src="/{{ item.image_filename if item.image_filename else experience_item.image_filename }}"
-                         class="rounded img-fluid"
-                         alt="{{ item.project }}"/>
-                {% elif item.icon %}
-                    <i class="bi bi-{{ item.icon }}" style="font-size:250%"></i>
-                {% endif %}
+<img src="/{{ item.image_filename if item.image_filename else experience_item.image_filename }}"
+     class="card-img-top{% if not item.url %} d-print-none{% endif %}"
+     alt="{{ item.project }}"/>
 
-                {% if item.url %}
-                    </a>
-                {% endif %}
-            </div>
-        {% endif %}
+{% if item.url %}
+    </a>
+{% endif %}
+{% endif %}
 
-        <div class="
-            col col-12
-            {{ "col-sm-10" if has_image_or_icon else "col-sm-12" }}
-            {{ "col-md-10" if has_image_or_icon else "col-md-12" }}
-            {{ "col-xl-10" if has_image_or_icon else "col-xl-12" }}
-            {{ "col-xxl-10" if has_image_or_icon else "col-xxl-12" }}
-        ">
-            {% if item.url %}
-                <a class="text-decoration-none link-body-emphasis me-1" href="{{ item.url }}"
-                   target="_blank" rel="noopener noreferrer" title="{{ block.open_project }}">
+<div class="card-body">
+    {% if item.url %}
+        <a class="text-decoration-none link-body-emphasis me-1" href="{{ item.url }}"
+           target="_blank" rel="noopener noreferrer" title="{{ block.open_project }}">
+    {% endif %}
+
+    <h3 class="h4 card-title mb-0 d-inline{% if item.icon %} bi bi-{{ item.icon }}{% endif %}">
+        {{ item.project }}
+    </h3>
+
+    {% if item.url %}
+        <i class="bi bi-box-arrow-up-right d-print-none"></i>
+        <span class="d-none d-print-inline">{{ item.url }}</span>
+        </a>
+    {% endif %}
+
+    {% include "project_badges.html" ignore missing with context %}
+
+    <button class="btn btn-outline-secondary btn-sm btn-toggle rounded-circle d-print-none text-decoration-none"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#{{ toggle_id }}" aria-expanded="false"
+            aria-controls="{{ toggle_id }}"
+            title="{{ block.toggle_details }}">
+        <i class="bi bi-chevron-down"></i>
+    </button>
+
+    <div class="card-text">
+        {{ item.description }}
+        <br>
+        <small class="text-body-secondary">{{ item.position }}</small>
+    </div>
+
+    <div class="collapse d-print-block" id="{{ toggle_id }}">
+        <div class="d-flex flex-column gap-1">
+            {% if experience_item %}
+                <div class="card-text">
+                    <small class="text-body-secondary">
+                        {{ block.associated_with }}
+                        <b>
+                            {% if experience_item.url %}
+                                <a class="text-decoration-none link-body-emphasis"
+                                   href="{{ experience_item.url }}" target="_blank" rel="noopener noreferrer"
+                                   title="{{ block.open_company }}">
+                            {% endif %}
+
+                            {{ experience_item.company }}
+
+                            {% if experience_item.url %}
+                                <i class="bi bi-box-arrow-up-right d-print-none"></i>
+                                <span class="d-none d-print-inline">{{ experience_item.url }}</span>
+                                </a>
+                            {% endif %}
+                        </b>
+                    </small>
+                </div>
             {% endif %}
 
-            <h3 class="h4 card-title mb-0 d-inline">
-                {{ item.project }}
-            </h3>
-
-            {% if item.url %}
-                <i class="bi bi-box-arrow-up-right d-print-none"></i>
-                <span class="d-none d-print-inline">{{ item.url }}</span>
-                </a>
+            {% if item.achievements %}
+                <div class="card-text">
+                    <ul class="mb-0">
+                        {% for achievement in item.achievements %}
+                            <li>{{ achievement }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
             {% endif %}
 
-            {% include "project_badges.html" ignore missing with context %}
-
-            <button class="btn btn-outline-secondary btn-sm btn-toggle rounded-circle d-print-none text-decoration-none"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#{{ toggle_id }}" aria-expanded="false"
-                    aria-controls="{{ toggle_id }}"
-                    title="{{ block.toggle_details }}">
-                <i class="bi bi-chevron-down"></i>
-            </button>
-
-            <div class="card-text">
-                {{ item.description }}
-                <br>
-                <small class="text-body-secondary">{{ item.position }}</small>
-            </div>
+            {% if item.tags %}
+                <div class="card-text">
+                    <small class="text-body-secondary">
+                        <i class="bi bi-tags"></i>
+                        {{ item.tags | unique | join(' · ') }}
+                    </small>
+                </div>
+            {% endif %}
         </div>
     </div>
 
-    <div class="d-flex flex-column gap-1">
-        <div class="collapse d-print-block" id="{{ toggle_id }}">
-            <div class="d-flex flex-column gap-1">
-                {% if experience_item %}
-                    <div class="card-text">
-                        <small class="text-body-secondary">
-                            {{ block.associated_with }}
-                            <b>
-                                {% if experience_item.url %}
-                                    <a class="text-decoration-none link-body-emphasis"
-                                       href="{{ experience_item.url }}" target="_blank" rel="noopener noreferrer"
-                                       title="{{ block.open_company }}">
-                                {% endif %}
-
-                                {{ experience_item.company }}
-
-                                {% if experience_item.url %}
-                                    <i class="bi bi-box-arrow-up-right d-print-none"></i>
-                                    <span class="d-none d-print-inline">{{ experience_item.url }}</span>
-                                    </a>
-                                {% endif %}
-                            </b>
-                        </small>
-                    </div>
-                {% endif %}
-
-                {% if item.achievements %}
-                    <div class="card-text">
-                        <ul class="mb-0">
-                            {% for achievement in item.achievements %}
-                                <li>{{ achievement }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-
-                {% if item.tags %}
-                    <div class="card-text">
-                        <small class="text-body-secondary">
-                            <i class="bi bi-tags"></i>
-                            {{ item.tags | unique | join(' · ') }}
-                        </small>
-                    </div>
-                {% endif %}
-            </div>
+    {% if item.start_date %}
+        <div class="card-text">
+            <small class="text-body-secondary">
+                <i class="bi bi-calendar"></i>
+                {{ item.start_date | date_range(item.end_date) }}
+            </small>
         </div>
+    {% endif %}
 
-        {% if item.start_date %}
-            <div class="card-text">
-                <small class="text-body-secondary">
-                    <i class="bi bi-calendar"></i>
-                    {{ item.start_date | date_range(item.end_date) }}
-                </small>
-            </div>
-        {% endif %}
-
-        {% if item.location %}
-            <div class="card-text">
-                <small class="text-body-secondary">
-                    <i class="bi bi-geo"></i>
-                    {{ item.location }}
-                    {% if item.location_type %}
-                        · {{ item.location_type }}
-                    {% endif %}
-                </small>
-            </div>
-        {% endif %}
-    </div>
+    {% if item.location %}
+        <div class="card-text">
+            <small class="text-body-secondary">
+                <i class="bi bi-geo"></i>
+                {{ item.location }}
+                {% if item.location_type %}
+                    · {{ item.location_type }}
+                {% endif %}
+            </small>
+        </div>
+    {% endif %}
 </div>
