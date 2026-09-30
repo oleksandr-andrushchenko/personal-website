@@ -16,7 +16,7 @@
     {% endif %}
 
 <img src="/{{ item.image_filename if item.image_filename else experience_item.image_filename }}"
-     class="card-img-top{% if not item.url %} d-print-none{% endif %}"
+     class="card-img-top p-3 pb-0{% if not item.url %} d-print-none{% endif %}"
      alt="{{ item.project }}"/>
 
 {% if item.url %}

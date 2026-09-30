@@ -6,7 +6,7 @@
            rel="noopener noreferrer">
     {% endif %}
 
-<img class="card-img-top{% if not item.url %} d-print-none{% endif %}" src="/{{ item.image_filename }}"
+<img class="card-img-top p-3 pb-0{% if not item.url %} d-print-none{% endif %}" src="/{{ item.image_filename }}"
      alt="{{ item.school }}"/>
 
 {% if item.url %}
